@@ -27,10 +27,6 @@
                 Home
             </a>
 
-            <a href="#"
-                class="nav-link">
-                Detection
-            </a>
 
             <a href="#"
                 class="nav-link">
@@ -42,14 +38,14 @@
                 Quiz
             </a>
 
-            <a href="login.php"
-                class="nav-link">
-                Login
-            </a>
-
             <a href="register.php"
                 class="nav-link">
                 Register
+            </a>
+
+            <a href="login.php"
+                class="nav-link">
+                Login
             </a>
 
             <button id="theme-toggle"
@@ -80,11 +76,15 @@
                 placeholder="Enter suspicious URL to analyze"
                 class="w-96 px-5 py-4 rounded-l-lg bg-[var(--card)] text-[var(--text)] outline-none">
 
+            <a href="register.php">
 
-            <button
-                class="px-8 py-4 bg-[var(--primary)] text-white rounded-r-lg hover:bg-[var(--secondary)] transition">
-                Analyze URL
-            </button>
+                <button
+                    class="px-8 py-4 bg-[var(--primary)] text-white rounded-r-lg hover:bg-[var(--secondary)] transition">
+                    Analyze URL
+                </button>
+
+            </a>
+
 
         </div>
 

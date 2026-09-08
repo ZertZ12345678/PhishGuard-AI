@@ -26,7 +26,7 @@
                 Home
             </a>
 
-            <a href="#"
+            <a href="detection.php"
                 class="nav-link">
                 Detection
             </a>
