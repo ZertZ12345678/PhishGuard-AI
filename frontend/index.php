@@ -169,15 +169,244 @@
     </section>
 
 
-    <footer class="text-center py-10 bg-[var(--nav)] text-[var(--muted)]">
+    <!-- =====================================================
+     FOOTER
+====================================================== -->
 
-        <h3 class="text-xl font-bold">
-            PhishGuard AI
-        </h3>
+    <footer
+        class="
+        bg-[var(--nav)]
+        mt-20
+        px-6
+        py-12
+    ">
 
-        <p>
-            AI-Based Phishing URL Detection and Cybersecurity Awareness System
-        </p>
+
+        <div
+            class="
+            max-w-7xl
+            mx-auto
+            grid
+            md:grid-cols-4
+            gap-10
+        ">
+
+
+            <!-- Brand -->
+
+            <div>
+
+                <a
+                    href="index.php"
+                    class="
+                    text-2xl
+                    font-bold
+                    text-[var(--secondary)]
+                    no-underline
+                ">
+                    🛡 PhishGuard AI
+                </a>
+
+
+                <p
+                    class="
+                    mt-4
+                    text-[var(--muted)]
+                    text-sm
+                    leading-relaxed
+                ">
+                    An AI-based phishing URL detection and
+                    cybersecurity awareness system that helps
+                    users identify online threats and improve
+                    digital security.
+                </p>
+
+
+            </div>
+
+
+
+            <!-- Quick Links -->
+
+            <div>
+
+
+                <h3
+                    class="
+                    text-lg
+                    font-bold
+                    text-[var(--text)]
+                    mb-4
+                ">
+                    Quick Links
+                </h3>
+
+
+                <ul
+                    class="
+                    space-y-3
+                    text-sm
+                ">
+
+                    <li>
+                        <a
+                            href="index.php"
+                            class="nav-link no-underline">
+                            Home
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a
+                            href="login.php"
+                            class="nav-link no-underline">
+                            Login
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a
+                            href="register.php"
+                            class="nav-link no-underline">
+                            Register
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a
+                            href="#"
+                            class="nav-link no-underline">
+                            Detection
+                        </a>
+                    </li>
+
+                </ul>
+
+
+            </div>
+
+
+
+
+            <!-- Security -->
+
+            <div>
+
+
+                <h3
+                    class="
+                    text-lg
+                    font-bold
+                    text-[var(--text)]
+                    mb-4
+                ">
+                    Security
+                </h3>
+
+
+                <ul
+                    class="
+                    space-y-3
+                    text-sm
+                ">
+
+                    <li>
+                        <a
+                            href="#"
+                            class="nav-link no-underline">
+                            Phishing Awareness
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a
+                            href="#"
+                            class="nav-link no-underline">
+                            Cybersecurity Tips
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a
+                            href="#"
+                            class="nav-link no-underline">
+                            Security Quiz
+                        </a>
+                    </li>
+
+
+                </ul>
+
+
+            </div>
+
+
+
+
+            <!-- Contact -->
+
+            <div>
+
+
+                <h3
+                    class="
+                    text-lg
+                    font-bold
+                    text-[var(--text)]
+                    mb-4
+                ">
+                    About System
+                </h3>
+
+
+                <p
+                    class="
+                    text-sm
+                    text-[var(--muted)]
+                    leading-relaxed
+                ">
+
+                    Powered by Machine Learning
+                    technology using a Random Forest
+                    classification model for phishing
+                    URL detection.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+        <!-- Bottom Copyright -->
+
+        <div
+            class="
+            max-w-7xl
+            mx-auto
+            mt-10
+            pt-6
+            border-t
+            border-gray-500/20
+            text-center
+            text-sm
+            text-[var(--muted)]
+        ">
+
+            © 2026 PhishGuard AI.
+            All rights reserved.
+
+        </div>
+
 
     </footer>
 
