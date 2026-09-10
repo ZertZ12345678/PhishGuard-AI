@@ -28,7 +28,7 @@
             </a>
 
 
-            <a href="#"
+            <a href="awareness.php"
                 class="nav-link">
                 Awareness
             </a>
@@ -277,7 +277,7 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="register.php"
                             class="nav-link no-underline">
                             Detection
                         </a>
@@ -315,7 +315,7 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="awareness.php"
                             class="nav-link no-underline">
                             Phishing Awareness
                         </a>
