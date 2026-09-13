@@ -5,17 +5,25 @@ session_start();
 include "db_connection.php";
 
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+
     $email = trim($_POST["email"]);
+
     $password = $_POST["password"];
+
 
 
     // Find user by email
 
-    $sql = "SELECT * FROM users WHERE Email = ?";
+    $sql =
+        "SELECT * FROM users WHERE Email = ?";
 
-    $stmt = $conn->prepare($sql);
+
+    $stmt =
+        $conn->prepare($sql);
+
 
     $stmt->bind_param(
         "s",
@@ -26,47 +34,143 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
 
-    $result = $stmt->get_result();
+    $result =
+        $stmt->get_result();
 
 
 
     if ($result->num_rows == 1) {
 
 
-        $user = $result->fetch_assoc();
+        $user =
+            $result->fetch_assoc();
 
 
 
-        // Check password
+        /*
+        ==========================================
+        PASSWORD CHECK
+        ==========================================
 
-        if (password_verify($password, $user["Password"])) {
+        Admin:
+        - Simple password checking
+        - For project/demo use
+
+        User:
+        - Hashed password verification
+        ==========================================
+        */
 
 
-            $_SESSION["UserID"] = $user["UserID"];
-            $_SESSION["Username"] = $user["Username"];
-            $_SESSION["Role"] = $user["Role"];
+        $isPasswordCorrect = false;
 
 
 
-            // Role-based access
+        // Admin login
 
-            if ($user["Role"] == "Admin") {
+        if (
+            $user["Role"] == "Admin"
+            &&
+            $password == $user["Password"]
+        ) {
 
-                header("Location: ../../frontend/admin_dashboard.php");
+            $isPasswordCorrect = true;
+        }
+
+
+
+        // Normal user login
+
+        elseif (
+
+            password_verify(
+                $password,
+                $user["Password"]
+            )
+
+        ) {
+
+            $isPasswordCorrect = true;
+        }
+
+
+
+
+        if ($isPasswordCorrect) {
+
+
+
+            // Create session
+
+            $_SESSION["UserID"] =
+                $user["UserID"];
+
+
+            $_SESSION["Username"] =
+                $user["Username"];
+
+
+            $_SESSION["Email"] =
+                $user["Email"];
+
+
+            $_SESSION["Role"] =
+                $user["Role"];
+
+
+
+
+
+            /*
+            ======================================
+            ROLE BASED REDIRECT
+            ======================================
+            */
+
+
+            if (
+                $user["Role"] == "Admin"
+            ) {
+
+
+                header(
+                    "Location: ../../frontend/admin_dashboard.php"
+                );
+
+
                 exit();
             } else {
 
-                header("Location: ../../frontend/user_home.php");
+
+                header(
+                    "Location: ../../frontend/user_home.php"
+                );
+
+
                 exit();
             }
         } else {
 
-            echo "Incorrect password.";
+
+            echo "
+            <script>
+            alert('Incorrect password.');
+            window.location.href='../../frontend/login.php';
+            </script>
+            ";
         }
     } else {
 
-        echo "Account not found.";
+
+        echo "
+        <script>
+        alert('Account not found.');
+        window.location.href='../../frontend/login.php';
+        </script>
+        ";
     }
+
+
 
 
     $stmt->close();
