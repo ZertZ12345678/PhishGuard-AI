@@ -274,15 +274,6 @@
                         </a>
                     </li>
 
-
-                    <li>
-                        <a
-                            href="register.php"
-                            class="nav-link no-underline">
-                            Detection
-                        </a>
-                    </li>
-
                 </ul>
 
 
@@ -324,9 +315,9 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="register.php"
                             class="nav-link no-underline">
-                            Cybersecurity Tips
+                            Detection
                         </a>
                     </li>
 

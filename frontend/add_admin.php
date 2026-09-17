@@ -4,6 +4,14 @@ session_start();
 
 
 // =====================================
+// DATABASE CONNECTION
+// =====================================
+
+include "../backend/php/db_connection.php";
+
+
+
+// =====================================
 // ADMIN ACCESS CHECK
 // =====================================
 
@@ -17,138 +25,294 @@ if (
 }
 
 
-include "../backend/php/db_connection.php";
-
 
 $message = "";
+
 $messageType = "";
+
+
+$username_value = "";
+
+$email_value = "";
+
 
 
 
 // =====================================
-// CREATE ADMIN
+// CREATE NEW ADMIN
 // =====================================
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
-    $username = trim($_POST["username"]);
 
-    $email = trim($_POST["email"]);
-
-    $password = $_POST["password"];
+    $username =
+        trim($_POST["username"]);
 
 
-
-    // Check email
-
-    $check =
-        "SELECT * FROM users WHERE Email=?";
+    $email =
+        trim($_POST["email"]);
 
 
-    $checkStmt =
-        $conn->prepare($check);
+    // Keep values after validation error
+
+    $username_value =
+        htmlspecialchars(
+            $username
+        );
 
 
-    $checkStmt->bind_param(
-        "s",
-        $email
-    );
-
-
-    $checkStmt->execute();
-
-
-    $result =
-        $checkStmt->get_result();
+    $email_value =
+        htmlspecialchars(
+            $email
+        );
 
 
 
-    if ($result->num_rows > 0) {
+    $password =
+        $_POST["password"];
+
+
+
+    $confirm_password =
+        $_POST["confirm_password"];
+
+
+
+
+
+
+    // =================================
+    // CHECK PASSWORD MATCH
+    // =================================
+
+
+    if (
+        $password !== $confirm_password
+    ) {
 
 
         $message =
-            "Email already exists.";
+            "Passwords do not match.";
+
+
+        $messageType =
+            "error";
+    }
+
+
+
+
+    // =================================
+    // CHECK EMAIL FORMAT
+    // =================================
+
+
+    elseif (
+        !filter_var(
+            $email,
+            FILTER_VALIDATE_EMAIL
+        )
+    ) {
+
+
+        $message =
+            "Please enter a valid email address.";
+
+
+        $messageType =
+            "error";
+    }
+
+
+
+
+    // =================================
+    // CHECK PASSWORD LENGTH
+    // =================================
+
+
+    elseif (
+        strlen($password) < 8
+    ) {
+
+
+        $message =
+            "Password must contain at least 8 characters.";
+
 
         $messageType =
             "error";
     } else {
 
 
-        $hashedPassword =
-            password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
+
+        // =================================
+        // CHECK EXISTING USERNAME / EMAIL
+        // =================================
 
 
-
-        $sql =
+        $check_sql =
             "
-        INSERT INTO users
-        (
-            Username,
-            Email,
-            Password,
-            Role
-        )
-
-        VALUES
-        (
-            ?,
-            ?,
-            ?,
-            'Admin'
-        )
+        SELECT *
+        FROM users
+        WHERE Username = ?
+        OR Email = ?
         ";
 
 
 
-        $stmt =
-            $conn->prepare($sql);
+        $check_stmt =
+            $conn->prepare(
+                $check_sql
+            );
 
 
 
-        $stmt->bind_param(
-            "sss",
+        $check_stmt->bind_param(
+            "ss",
             $username,
-            $email,
-            $hashedPassword
+            $email
         );
 
 
 
-        if ($stmt->execute()) {
+        $check_stmt->execute();
+
+
+
+        $result =
+            $check_stmt->get_result();
+
+
+
+
+
+        if (
+            $result->num_rows > 0
+        ) {
 
 
             $message =
-                "Admin account created successfully.";
+                "Username or email already exists.";
 
-            $messageType =
-                "success";
-        } else {
-
-
-            $message =
-                "Failed to create Admin.";
 
             $messageType =
                 "error";
+        } else {
+
+
+
+            // =================================
+            // HASH PASSWORD
+            // =================================
+
+
+            $hashed_password =
+                password_hash(
+                    $password,
+                    PASSWORD_DEFAULT
+                );
+
+
+
+
+
+            // =================================
+            // ADMIN ROLE
+            // =================================
+
+
+            $role =
+                "Admin";
+
+
+
+
+
+
+            // =================================
+            // INSERT ADMIN ACCOUNT
+            // =================================
+
+
+            $sql =
+                "
+            INSERT INTO users
+            (
+                Username,
+                Email,
+                Password,
+                Role
+            )
+
+            VALUES
+            (
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            ";
+
+
+
+
+            $stmt =
+                $conn->prepare(
+                    $sql
+                );
+
+
+
+
+            $stmt->bind_param(
+                "ssss",
+                $username,
+                $email,
+                $hashed_password,
+                $role
+            );
+
+
+
+
+
+            if (
+                $stmt->execute()
+            ) {
+
+
+                $message =
+                    "Admin account created successfully.";
+
+
+                $messageType =
+                    "success";
+            } else {
+
+
+                $message =
+                    "Failed to create Admin.";
+
+
+                $messageType =
+                    "error";
+            }
+
+
+
+
+            $stmt->close();
         }
 
 
 
-        $stmt->close();
+        $check_stmt->close();
     }
-
-
-    $checkStmt->close();
 }
 
-
 ?>
-
-
 
 <!DOCTYPE html>
 
@@ -157,7 +321,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <head>
 
+
     <meta charset="UTF-8">
+
 
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
@@ -168,12 +334,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </title>
 
 
+
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="css/style.css">
+
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
 
 
 </head>
+
 
 
 
@@ -189,9 +361,10 @@ duration-300
 
 
 
-    <!-- ===============================
-SIDEBAR
-================================ -->
+
+    <!-- =====================================
+     ADMIN SIDEBAR
+===================================== -->
 
 
     <aside
@@ -207,6 +380,9 @@ px-6
 py-8
 shadow-xl
 ">
+
+
+        <!-- Logo -->
 
 
         <a
@@ -226,28 +402,23 @@ no-underline
 
 
 
-        <p
-            class="
-mt-2
-text-sm
-text-[var(--muted)]
-">
 
-            Admin Panel
-
-        </p>
-
-
+        <!-- Navigation -->
 
 
         <nav
+
             class="
 mt-10
 space-y-3
 ">
 
 
+
+
+
             <a
+
                 href="admin_dashboard.php"
 
                 class="
@@ -266,7 +437,10 @@ no-underline
 
 
 
+
+
             <a
+
                 href="quiz_management.php"
 
                 class="
@@ -285,7 +459,10 @@ no-underline
 
 
 
+
+
             <a
+
                 href="user_management.php"
 
                 class="
@@ -304,7 +481,10 @@ no-underline
 
 
 
+
+
             <a
+
                 href="add_admin.php"
 
                 class="
@@ -324,7 +504,10 @@ no-underline
 
 
 
+
+
             <a
+
                 href="detection_history.php"
 
                 class="
@@ -343,7 +526,10 @@ no-underline
 
 
 
+
+
             <a
+
                 href="reports.php"
 
                 class="
@@ -361,6 +547,8 @@ no-underline
 
 
 
+
+
         </nav>
 
 
@@ -368,7 +556,13 @@ no-underline
 
 
 
-        <!-- Bottom -->
+
+
+
+        <!-- =====================================
+     BOTTOM CONTROLS
+===================================== -->
+
 
         <div
 
@@ -379,6 +573,12 @@ left-6
 right-6
 space-y-4
 ">
+
+
+
+
+
+            <!-- Theme Button -->
 
 
             <button
@@ -398,16 +598,26 @@ border-none
 cursor-pointer
 ">
 
-                ☀
+
+                <span>
+                    ☀
+                </span>
+
 
                 <span>
                     Light Mode
                 </span>
 
 
+
             </button>
 
 
+
+
+
+
+            <!-- Logout -->
 
 
             <a
@@ -430,21 +640,19 @@ no-underline
 
 
 
+
+
         </div>
+
+
 
 
 
     </aside>
 
-
-
-
-
-
-
-    <!-- ===============================
-MAIN CONTENT
-================================ -->
+    <!-- =====================================
+     MAIN CONTENT
+===================================== -->
 
 
     <main
@@ -466,6 +674,10 @@ mx-auto
 ">
 
 
+
+            <!-- Page Title -->
+
+
             <h1
 
                 class="
@@ -477,6 +689,8 @@ text-[var(--secondary)]
                 👑 Add New Admin
 
             </h1>
+
+
 
 
 
@@ -497,7 +711,8 @@ text-[var(--muted)]
 
 
 
-            <!-- FORM -->
+
+            <!-- FORM CARD -->
 
 
             <div
@@ -515,6 +730,12 @@ p-10
 
 
 
+
+
+
+                <!-- Message Display -->
+
+
                 <?php if ($message != ""): ?>
 
 
@@ -530,6 +751,7 @@ rounded-lg
                     echo $messageType == "success"
 
                         ?
+
                         "bg-green-500/10 text-green-400"
 
                         :
@@ -540,7 +762,9 @@ rounded-lg
 
 ">
 
+
                         <?php echo $message; ?>
+
 
                     </div>
 
@@ -553,17 +777,37 @@ rounded-lg
 
 
 
-                <form method="POST">
+
+
+                <!-- FORM -->
+
+
+                <form
+
+                    method="POST">
+
+
+
+
+
+
+
+                    <!-- Username -->
 
 
                     <label
+
                         class="
 block
 mb-2
 font-semibold
 ">
+
                         Username
+
                     </label>
+
+
 
 
                     <input
@@ -574,6 +818,8 @@ font-semibold
 
                         required
 
+                        value="<?php echo $username_value; ?>"
+
                         placeholder="Enter username"
 
                         class="
@@ -583,6 +829,7 @@ py-4
 mb-6
 rounded-xl
 bg-[var(--bg)]
+text-[var(--text)]
 outline-none
 focus:ring-2
 focus:ring-blue-500
@@ -592,7 +839,15 @@ focus:ring-blue-500
 
 
 
+
+
+
+
+                    <!-- Email -->
+
+
                     <label
+
                         class="
 block
 mb-2
@@ -604,6 +859,8 @@ font-semibold
                     </label>
 
 
+
+
                     <input
 
                         type="email"
@@ -611,6 +868,8 @@ font-semibold
                         name="email"
 
                         required
+
+                        value="<?php echo $email_value; ?>"
 
                         placeholder="admin@example.com"
 
@@ -621,6 +880,7 @@ py-4
 mb-6
 rounded-xl
 bg-[var(--bg)]
+text-[var(--text)]
 outline-none
 focus:ring-2
 focus:ring-blue-500
@@ -630,7 +890,13 @@ focus:ring-blue-500
 
 
 
+
+
+                    <!-- Password -->
+
+
                     <label
+
                         class="
 block
 mb-2
@@ -642,23 +908,37 @@ font-semibold
                     </label>
 
 
-                    <input
 
-                        type="password"
 
-                        name="password"
 
-                        required
-
-                        placeholder="Create password"
+                    <div
 
                         class="
+relative
+mb-6
+">
+
+
+                        <input
+
+                            id="admin-password"
+
+                            type="password"
+
+                            name="password"
+
+                            required
+
+                            placeholder="Create password"
+
+                            class="
 w-full
 px-5
 py-4
-mb-8
+pr-14
 rounded-xl
 bg-[var(--bg)]
+text-[var(--text)]
 outline-none
 focus:ring-2
 focus:ring-blue-500
@@ -667,6 +947,130 @@ focus:ring-blue-500
 
 
 
+
+                        <button
+
+                            type="button"
+
+                            id="toggle-admin-password"
+
+                            class="
+absolute
+right-4
+top-1/2
+-translate-y-1/2
+text-xl
+cursor-pointer
+bg-transparent
+border-none
+">
+
+                            👁
+
+                        </button>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <!-- Confirm Password -->
+
+
+                    <label
+
+                        class="
+block
+mb-2
+font-semibold
+">
+
+                        Confirm Password
+
+                    </label>
+
+
+
+
+
+                    <div
+
+                        class="
+relative
+mb-8
+">
+
+
+                        <input
+
+                            id="confirm-password"
+
+                            type="password"
+
+                            name="confirm_password"
+
+                            required
+
+                            placeholder="Confirm password"
+
+                            class="
+w-full
+px-5
+py-4
+pr-14
+rounded-xl
+bg-[var(--bg)]
+text-[var(--text)]
+outline-none
+focus:ring-2
+focus:ring-blue-500
+">
+
+
+
+
+
+
+                        <button
+
+                            type="button"
+
+                            id="toggle-confirm-password"
+
+                            class="
+absolute
+right-4
+top-1/2
+-translate-y-1/2
+text-xl
+cursor-pointer
+bg-transparent
+border-none
+">
+
+                            👁
+
+                        </button>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+
+
+                    <!-- Create Admin Button -->
 
 
                     <button
@@ -691,7 +1095,13 @@ transition
 
 
 
+
+
+
                 </form>
+
+
+
 
 
 
@@ -699,19 +1109,127 @@ transition
 
 
 
+
+
+
         </div>
+
+
+
 
 
     </main>
 
-
-
-
+    <!-- =====================================
+     JAVASCRIPT
+===================================== -->
 
 
     <script src="js/script.js"></script>
 
 
+
+    <script>
+        // =====================================
+        // PASSWORD SHOW / HIDE FUNCTION
+        // =====================================
+
+
+        function setupPasswordToggle(
+            inputId,
+            buttonId
+        ) {
+
+
+            const input =
+                document.getElementById(
+                    inputId
+                );
+
+
+            const button =
+                document.getElementById(
+                    buttonId
+                );
+
+
+
+            if (
+                input &&
+                button
+            ) {
+
+
+                button.addEventListener(
+                    "click",
+                    function() {
+
+
+                        if (
+                            input.type === "password"
+                        ) {
+
+
+                            input.type =
+                                "text";
+
+
+                            button.textContent =
+                                "🙈";
+
+
+                        } else {
+
+
+                            input.type =
+                                "password";
+
+
+                            button.textContent =
+                                "👁";
+
+
+                        }
+
+
+                    }
+                );
+
+
+            }
+
+
+        }
+
+
+
+
+
+        // Password
+
+        setupPasswordToggle(
+            "admin-password",
+            "toggle-admin-password"
+        );
+
+
+
+
+
+
+        // Confirm Password
+
+        setupPasswordToggle(
+            "confirm-password",
+            "toggle-confirm-password"
+        );
+    </script>
+
+
+
+
+
 </body>
+
 
 </html>

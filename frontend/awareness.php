@@ -1,31 +1,128 @@
+<?php
+
+session_start();
+
+
+// =====================================
+// LOGOUT
+// =====================================
+
+if (isset($_GET["logout"])) {
+
+    session_unset();
+
+    session_destroy();
+
+    header("Location: index.php");
+
+    exit();
+}
+
+
+// =====================================
+// LOGIN STATUS
+// =====================================
+
+$isLoggedIn =
+    isset($_SESSION["UserID"]) &&
+    isset($_SESSION["Role"]) &&
+    $_SESSION["Role"] == "User";
+
+
+// =====================================
+// ADMIN ACCESS
+// =====================================
+
+if (
+    isset($_SESSION["Role"]) &&
+    $_SESSION["Role"] == "Admin"
+) {
+
+    header("Location: admin_dashboard.php");
+
+    exit();
+}
+
+?>
+
+
+
 <!DOCTYPE html>
+
 <html lang="en">
+
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Awareness - PhishGuard AI</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+
+    <title>
+        Awareness - PhishGuard AI
+    </title>
+
+
+    <!-- Tailwind CSS -->
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Custom CSS -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
 
 </head>
 
 
-<body class="bg-[var(--bg)] text-[var(--text)] transition duration-300">
 
 
-    <!-- ================= NAVBAR ================= -->
+<body
+    class="
+    bg-[var(--bg)]
+    text-[var(--text)]
+    transition
+    duration-300
+    ">
 
-    <header class="flex justify-between items-center px-10 py-5 bg-[var(--nav)]">
 
 
-        <a href="user_home.php"
-            class="text-2xl font-bold text-[var(--secondary)] no-underline">
+
+
+    <!-- =====================================
+     NAVBAR
+===================================== -->
+
+
+    <header
+        class="
+    flex
+    justify-between
+    items-center
+    px-10
+    py-5
+    bg-[var(--nav)]
+    ">
+
+
+        <!-- Logo -->
+
+
+        <a
+            href="<?php echo $isLoggedIn ? 'user_home.php' : 'index.php'; ?>"
+            class="
+        text-2xl
+        font-bold
+        text-[var(--secondary)]
+        no-underline
+        ">
 
             🛡 PhishGuard AI
 
@@ -33,52 +130,209 @@
 
 
 
-        <nav class="flex items-center gap-6">
 
 
-            <a href="user_home.php"
+        <!-- Navigation -->
+
+
+        <nav
+            class="
+        flex
+        items-center
+        gap-6
+        ">
+
+
+
+            <!-- Home -->
+
+
+            <a
+                href="<?php echo $isLoggedIn ? 'user_home.php' : 'index.php'; ?>"
                 class="nav-link">
+
                 Home
+
             </a>
 
 
-            <a href="detection.php"
-                class="nav-link">
-                Detection
-            </a>
 
 
-            <a href="awareness.php"
-                class="text-[var(--primary)] font-semibold no-underline">
+
+            <!-- Detection -->
+
+            <?php if ($isLoggedIn): ?>
+
+                <a
+                    href="detection.php"
+                    class="nav-link">
+                    Detection
+                </a>
+
+            <?php else: ?>
+
+                <a
+                    href="login.php"
+                    class="nav-link">
+                    Detection
+                </a>
+
+            <?php endif; ?>
+
+
+
+
+
+            <!-- Awareness -->
+
+
+            <a
+                href="awareness.php"
+
+                class="
+            text-[var(--primary)]
+            font-semibold
+            no-underline
+            ">
+
                 Awareness
-            </a>
 
-
-            <a href="quiz.php"
-                class="nav-link">
-                Quiz
-            </a>
-
-
-            <a href="dashboard.php"
-                class="nav-link">
-                Dashboard
-            </a>
-
-
-            <a href="index.php"
-                class="nav-link">
-                Logout
             </a>
 
 
 
-            <button id="theme-toggle"
-                class="text-2xl bg-transparent border-none cursor-pointer">
+
+
+            <!-- Quiz -->
+
+
+            <?php if ($isLoggedIn): ?>
+
+
+                <a
+                    href="quiz.php"
+                    class="nav-link">
+
+                    Quiz
+
+                </a>
+
+
+            <?php else: ?>
+
+
+                <a
+                    href="login.php"
+                    class="nav-link">
+
+                    Quiz
+
+                </a>
+
+
+            <?php endif; ?>
+
+
+
+
+
+            <!-- =================================
+             LOGGED-IN USER
+        ================================= -->
+
+
+            <?php if ($isLoggedIn): ?>
+
+
+                <!-- Dashboard -->
+
+
+                <a
+                    href="user_home.php"
+                    class="nav-link">
+
+                    Dashboard
+
+                </a>
+
+
+
+
+
+                <!-- Logout -->
+
+
+                <a
+                    href="awareness.php?logout=1"
+                    class="nav-link">
+
+                    Logout
+
+                </a>
+
+
+
+
+            <?php else: ?>
+
+
+
+                <!-- =================================
+                 GUEST USER
+            ================================= -->
+
+
+                <!-- Login -->
+
+
+                <a
+                    href="login.php"
+                    class="nav-link">
+
+                    Login
+
+                </a>
+
+
+
+
+
+                <!-- Register -->
+
+
+                <a
+                    href="register.php"
+                    class="nav-link">
+
+                    Register
+
+                </a>
+
+
+
+            <?php endif; ?>
+
+
+
+
+
+            <!-- Theme Toggle -->
+
+
+            <button
+                id="theme-toggle"
+
+                class="
+            text-2xl
+            bg-transparent
+            border-none
+            cursor-pointer
+            ">
 
                 ☀
 
             </button>
+
 
 
         </nav>
@@ -90,27 +344,32 @@
 
 
 
-    <!-- ================= HERO ================= -->
+
+
+    <!-- =====================================
+     HERO
+===================================== -->
+
 
     <section
         class="
-text-center
-py-20
-px-6
-">
+    text-center
+    py-20
+    px-6
+    ">
 
 
         <div
             class="
-inline-block
-px-5
-py-2
-rounded-full
-bg-blue-500/10
-text-[var(--primary)]
-font-semibold
-text-sm
-">
+        inline-block
+        px-5
+        py-2
+        rounded-full
+        bg-blue-500/10
+        text-[var(--primary)]
+        font-semibold
+        text-sm
+        ">
 
             🛡 Cybersecurity Awareness
 
@@ -118,14 +377,16 @@ text-sm
 
 
 
+
+
         <h1
             class="
-mt-6
-text-4xl
-md:text-5xl
-font-bold
-text-[var(--secondary)]
-">
+        mt-6
+        text-4xl
+        md:text-5xl
+        font-bold
+        text-[var(--secondary)]
+        ">
 
             Stay Safe From Phishing Attacks
 
@@ -133,15 +394,17 @@ text-[var(--secondary)]
 
 
 
+
+
         <p
             class="
-mt-5
-max-w-3xl
-mx-auto
-text-[var(--muted)]
-text-lg
-leading-relaxed
-">
+        mt-5
+        max-w-3xl
+        mx-auto
+        text-[var(--muted)]
+        text-lg
+        leading-relaxed
+        ">
 
             Learn how phishing attacks work, how attackers
             trick users, and how you can protect your personal
@@ -156,27 +419,36 @@ leading-relaxed
 
 
 
-    <!-- ================= WHAT IS PHISHING ================= -->
 
 
-    <section class="max-w-6xl mx-auto px-6">
+    <!-- =====================================
+     WHAT IS PHISHING
+===================================== -->
+
+
+    <section
+        class="
+    max-w-6xl
+    mx-auto
+    px-6
+    ">
 
 
         <div
             class="
-bg-[var(--card)]
-rounded-2xl
-shadow
-p-8
-">
+        bg-[var(--card)]
+        rounded-2xl
+        shadow
+        p-8
+        ">
 
 
             <h2
                 class="
-text-2xl
-font-bold
-text-[var(--secondary)]
-">
+            text-2xl
+            font-bold
+            text-[var(--secondary)]
+            ">
 
                 What is Phishing?
 
@@ -186,10 +458,10 @@ text-[var(--secondary)]
 
             <p
                 class="
-mt-4
-text-[var(--muted)]
-leading-relaxed
-">
+            mt-4
+            text-[var(--muted)]
+            leading-relaxed
+            ">
 
                 Phishing is a cyberattack technique where attackers
                 pretend to be trusted organizations or individuals
@@ -211,19 +483,29 @@ leading-relaxed
 
 
 
-    <!-- ================= ATTACK TYPES ================= -->
 
 
-    <section class="max-w-6xl mx-auto px-6 py-12">
+    <!-- =====================================
+     ATTACK TYPES
+===================================== -->
+
+
+    <section
+        class="
+    max-w-6xl
+    mx-auto
+    px-6
+    py-12
+    ">
 
 
         <h2
             class="
-text-3xl
-font-bold
-text-center
-text-[var(--secondary)]
-">
+        text-3xl
+        font-bold
+        text-center
+        text-[var(--secondary)]
+        ">
 
             Common Types of Phishing Attacks
 
@@ -231,34 +513,41 @@ text-[var(--secondary)]
 
 
 
+
         <div
             class="
-grid
-md:grid-cols-3
-gap-8
-mt-10
-">
+        grid
+        md:grid-cols-3
+        gap-8
+        mt-10
+        ">
+
+
+
+            <!-- Email -->
 
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <div class="text-4xl">
+
                     📧
+
                 </div>
 
 
                 <h3
                     class="
-mt-4
-font-bold
-text-xl
-">
+                mt-4
+                font-bold
+                text-xl
+                ">
 
                     Email Phishing
 
@@ -267,15 +556,14 @@ text-xl
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Fake emails pretending to be banks,
                     companies, or services to steal information.
 
                 </p>
-
 
             </div>
 
@@ -283,26 +571,30 @@ text-[var(--muted)]
 
 
 
+            <!-- Website -->
+
+
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
-
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <div class="text-4xl">
+
                     🌐
+
                 </div>
 
 
                 <h3
                     class="
-mt-4
-font-bold
-text-xl
-">
+                mt-4
+                font-bold
+                text-xl
+                ">
 
                     Website Phishing
 
@@ -311,15 +603,14 @@ text-xl
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Fake websites designed to look like
                     real websites and collect user credentials.
 
                 </p>
-
 
             </div>
 
@@ -327,26 +618,30 @@ text-[var(--muted)]
 
 
 
+            <!-- SMS -->
+
+
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
-
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <div class="text-4xl">
+
                     📱
+
                 </div>
 
 
                 <h3
                     class="
-mt-4
-font-bold
-text-xl
-">
+                mt-4
+                font-bold
+                text-xl
+                ">
 
                     SMS Phishing
 
@@ -355,15 +650,14 @@ text-xl
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Fraudulent text messages containing
                     dangerous links or fake requests.
 
                 </p>
-
 
             </div>
 
@@ -377,19 +671,29 @@ text-[var(--muted)]
 
 
 
-    <!-- ================= WARNING SIGNS ================= -->
 
 
-    <section class="max-w-6xl mx-auto px-6 py-12">
+    <!-- =====================================
+     WARNING SIGNS
+===================================== -->
+
+
+    <section
+        class="
+    max-w-6xl
+    mx-auto
+    px-6
+    py-12
+    ">
 
 
         <h2
             class="
-text-3xl
-font-bold
-text-center
-text-[var(--secondary)]
-">
+        text-3xl
+        font-bold
+        text-center
+        text-[var(--secondary)]
+        ">
 
             Warning Signs of Phishing URLs
 
@@ -397,67 +701,93 @@ text-[var(--secondary)]
 
 
 
+
         <div
             class="
-grid
-md:grid-cols-2
-gap-6
-mt-10
-">
+        grid
+        md:grid-cols-2
+        gap-6
+        mt-10
+        ">
+
+
+
+            <!-- Suspicious Domain -->
 
 
             <div
                 class="
-bg-[var(--card)]
-p-6
-rounded-xl
-shadow
-">
+            bg-[var(--card)]
+            p-6
+            rounded-xl
+            shadow
+            ">
 
-                <h3 class="font-bold text-xl">
+                <h3
+                    class="font-bold text-xl">
 
                     ⚠ Suspicious Domain
 
                 </h3>
 
 
-                <p class="mt-3 text-[var(--muted)]">
+                <p
+                    class="
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Attackers often create domains that look similar
                     to legitimate websites.
 
+                    <br><br>
+
                     Example:
+
+                    <br>
 
                     google-security-login.com
 
+                    <br><br>
+
                     instead of:
+
+                    <br>
 
                     google.com
 
                 </p>
-
 
             </div>
 
 
 
 
+
+            <!-- Urgent Requests -->
+
+
             <div
                 class="
-bg-[var(--card)]
-p-6
-rounded-xl
-shadow
-">
+            bg-[var(--card)]
+            p-6
+            rounded-xl
+            shadow
+            ">
 
-                <h3 class="font-bold text-xl">
+                <h3
+                    class="font-bold text-xl">
 
                     ⚠ Urgent Requests
 
                 </h3>
 
 
-                <p class="mt-3 text-[var(--muted)]">
+                <p
+                    class="
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Messages that force immediate action,
                     such as "verify now" or "account suspended",
@@ -465,67 +795,80 @@ shadow
 
                 </p>
 
-
             </div>
 
 
 
 
 
+            <!-- Unusual URLs -->
+
+
             <div
                 class="
-bg-[var(--card)]
-p-6
-rounded-xl
-shadow
-">
+            bg-[var(--card)]
+            p-6
+            rounded-xl
+            shadow
+            ">
 
-                <h3 class="font-bold text-xl">
+                <h3
+                    class="font-bold text-xl
+                ">
 
                     ⚠ Unusual URLs
 
                 </h3>
 
 
-                <p class="mt-3 text-[var(--muted)]">
+                <p
+                    class="
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Long URLs, many symbols, strange domains,
                     and IP addresses can indicate phishing.
 
                 </p>
 
-
             </div>
 
 
 
 
 
+            <!-- Fake Login -->
+
+
             <div
                 class="
-bg-[var(--card)]
-p-6
-rounded-xl
-shadow
-">
+            bg-[var(--card)]
+            p-6
+            rounded-xl
+            shadow
+            ">
 
-                <h3 class="font-bold text-xl">
+                <h3
+                    class="font-bold text-xl">
 
                     ⚠ Fake Login Pages
 
                 </h3>
 
 
-                <p class="mt-3 text-[var(--muted)]">
+                <p
+                    class="
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Never enter passwords on websites accessed
                     through suspicious links.
 
                 </p>
 
-
             </div>
-
 
 
         </div>
@@ -537,19 +880,29 @@ shadow
 
 
 
-    <!-- ================= PROTECTION ================= -->
 
 
-    <section class="max-w-6xl mx-auto px-6 py-12">
+    <!-- =====================================
+     PROTECTION
+===================================== -->
+
+
+    <section
+        class="
+    max-w-6xl
+    mx-auto
+    px-6
+    py-12
+    ">
 
 
         <h2
             class="
-text-3xl
-font-bold
-text-center
-text-[var(--secondary)]
-">
+        text-3xl
+        font-bold
+        text-center
+        text-[var(--secondary)]
+        ">
 
             How To Protect Yourself
 
@@ -557,45 +910,56 @@ text-[var(--secondary)]
 
 
 
+
         <div
             class="
-bg-[var(--card)]
-rounded-2xl
-shadow
-p-8
-mt-10
-">
+        bg-[var(--card)]
+        rounded-2xl
+        shadow
+        p-8
+        mt-10
+        ">
 
 
             <ul
                 class="
-space-y-4
-text-[var(--muted)]
-">
+            space-y-4
+            text-[var(--muted)]
+            ">
 
 
                 <li>
+
                     ✅ Check the website domain carefully before logging in.
+
                 </li>
 
 
                 <li>
+
                     ✅ Avoid clicking unknown links from emails or messages.
+
                 </li>
 
 
                 <li>
+
                     ✅ Use strong passwords and enable two-factor authentication.
+
                 </li>
 
 
                 <li>
+
                     ✅ Keep software and security tools updated.
+
                 </li>
 
 
                 <li>
+
                     ✅ Use PhishGuard AI to analyze suspicious URLs.
+
                 </li>
 
 
@@ -607,51 +971,75 @@ text-[var(--muted)]
 
     </section>
 
-    <!-- ================= FAQ / AWARENESS QUESTIONS ================= -->
 
-    <section class="max-w-6xl mx-auto px-6 py-12">
+
+
+
+
+
+    <!-- =====================================
+     FAQ
+===================================== -->
+
+
+    <section
+        class="
+    max-w-6xl
+    mx-auto
+    px-6
+    py-12
+    ">
 
 
         <h2
             class="
-text-3xl
-font-bold
-text-center
-text-[var(--secondary)]
-">
+        text-3xl
+        font-bold
+        text-center
+        text-[var(--secondary)]
+        ">
+
             Frequently Asked Cybersecurity Questions
+
         </h2>
+
+
 
 
         <p
             class="
-text-center
-mt-4
-text-[var(--muted)]
-">
+        text-center
+        mt-4
+        text-[var(--muted)]
+        ">
+
             Learn common phishing and cybersecurity questions to improve
             your online safety.
+
         </p>
+
+
 
 
 
         <div
             class="
-mt-10
-space-y-5
-">
+        mt-10
+        space-y-5
+        ">
 
 
 
-            <!-- Question 1 -->
+            <!-- Q1 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -662,10 +1050,10 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-leading-relaxed
-">
+                mt-3
+                text-[var(--muted)]
+                leading-relaxed
+                ">
 
                     Phishing is a cyberattack where attackers pretend to be
                     trusted people or organizations to trick users into revealing
@@ -679,15 +1067,17 @@ leading-relaxed
 
 
 
-            <!-- Question 2 -->
+
+            <!-- Q2 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -698,9 +1088,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Check the website address carefully. Warning signs include
                     strange domain names, incorrect spelling, missing HTTPS,
@@ -714,15 +1104,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 3 -->
+            <!-- Q3 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -733,9 +1124,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Attackers create fake websites to steal login credentials,
                     financial information, or personal data by making users
@@ -749,15 +1140,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 4 -->
+            <!-- Q4 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -768,9 +1160,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     No. HTTPS only means the connection is encrypted.
                     Phishing websites can also use HTTPS certificates.
@@ -784,15 +1176,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 5 -->
+            <!-- Q5 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -803,9 +1196,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Never share passwords, one-time verification codes,
                     bank account details, credit card information,
@@ -819,15 +1212,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 6 -->
+            <!-- Q6 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -838,16 +1232,20 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Attackers use urgency and fear to make victims act quickly
                     without checking whether the message or link is legitimate.
 
                     Examples:
+
                     "Your account will be closed today"
-                    "Verify immediately"
+
+                    and
+
+                    "Verify immediately".
 
                 </p>
 
@@ -857,15 +1255,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 7 -->
+            <!-- Q7 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -876,9 +1275,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Do not enter any personal information.
                     Close the website, change passwords if necessary,
@@ -893,15 +1292,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 8 -->
+            <!-- Q8 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -912,9 +1312,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     PhishGuard AI uses Machine Learning technology.
                     A Random Forest classifier analyzes URL features such as
@@ -929,15 +1329,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 9 -->
+            <!-- Q9 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -948,9 +1349,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Yes. Machine Learning models can sometimes produce false
                     positives or false negatives. Users should combine AI results
@@ -964,15 +1365,16 @@ text-[var(--muted)]
 
 
 
-            <!-- Question 10 -->
+            <!-- Q10 -->
+
 
             <div
                 class="
-bg-[var(--card)]
-rounded-xl
-p-6
-shadow
-">
+            bg-[var(--card)]
+            rounded-xl
+            p-6
+            shadow
+            ">
 
                 <h3 class="font-bold text-xl">
 
@@ -983,9 +1385,9 @@ shadow
 
                 <p
                     class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+                ">
 
                     Use strong passwords, enable two-factor authentication,
                     avoid suspicious links, update software regularly,
@@ -996,7 +1398,6 @@ text-[var(--muted)]
             </div>
 
 
-
         </div>
 
 
@@ -1005,56 +1406,68 @@ text-[var(--muted)]
 
 
 
-    <!-- =====================================================
+
+
+
+    <!-- =====================================
      FOOTER
-====================================================== -->
+===================================== -->
+
 
     <footer
         class="
-        bg-[var(--nav)]
-        mt-20
-        px-6
-        py-12
+    bg-[var(--nav)]
+    mt-20
+    px-6
+    py-12
     ">
 
 
         <div
             class="
-            max-w-7xl
-            mx-auto
-            grid
-            md:grid-cols-4
-            gap-10
+        max-w-7xl
+        mx-auto
+        grid
+        md:grid-cols-4
+        gap-10
         ">
+
 
 
             <!-- Brand -->
 
+
             <div>
+
 
                 <a
                     href="index.php"
                     class="
-                    text-2xl
-                    font-bold
-                    text-[var(--secondary)]
-                    no-underline
+                text-2xl
+                font-bold
+                text-[var(--secondary)]
+                no-underline
                 ">
+
                     🛡 PhishGuard AI
+
                 </a>
+
 
 
                 <p
                     class="
-                    mt-4
-                    text-[var(--muted)]
-                    text-sm
-                    leading-relaxed
+                mt-4
+                text-[var(--muted)]
+                text-sm
+                leading-relaxed
                 ">
+
                     An AI-based phishing URL detection and
                     cybersecurity awareness system that helps
                     users identify online threats and improve
                     digital security.
+
                 </p>
 
 
@@ -1062,117 +1475,171 @@ text-[var(--muted)]
 
 
 
+
+
             <!-- Quick Links -->
+
 
             <div>
 
 
                 <h3
                     class="
-                    text-lg
-                    font-bold
-                    text-[var(--text)]
-                    mb-4
+                text-lg
+                font-bold
+                text-[var(--text)]
+                mb-4
                 ">
+
                     Quick Links
+
                 </h3>
+
 
 
                 <ul
                     class="
-                    space-y-3
-                    text-sm
+                space-y-3
+                text-sm
                 ">
 
+
                     <li>
+
                         <a
                             href="index.php"
                             class="nav-link no-underline">
+
                             Home
+
                         </a>
+
                     </li>
 
 
                     <li>
+
                         <a
                             href="login.php"
                             class="nav-link no-underline">
+
                             Login
+
                         </a>
+
                     </li>
 
 
                     <li>
+
                         <a
                             href="register.php"
                             class="nav-link no-underline">
+
                             Register
+
                         </a>
+
                     </li>
 
 
-                    <li>
-                        <a
-                            href="register.php"
-                            class="nav-link no-underline">
-                            Detection
-                        </a>
-                    </li>
 
                 </ul>
 
 
             </div>
+
 
 
 
 
             <!-- Security -->
 
+
             <div>
 
 
                 <h3
                     class="
-                    text-lg
-                    font-bold
-                    text-[var(--text)]
-                    mb-4
+                text-lg
+                font-bold
+                text-[var(--text)]
+                mb-4
                 ">
+
                     Security
+
                 </h3>
+
 
 
                 <ul
                     class="
-                    space-y-3
-                    text-sm
+                space-y-3
+                text-sm
                 ">
 
+
                     <li>
+
                         <a
                             href="awareness.php"
                             class="nav-link no-underline">
+
                             Phishing Awareness
+
                         </a>
+
                     </li>
 
 
                     <li>
-                        <a
-                            href="#"
-                            class="nav-link no-underline">
-                            Cybersecurity Tips
-                        </a>
+
+                        <?php if ($isLoggedIn): ?>
+
+                            <a
+                                href="detection.php"
+                                class="nav-link">
+                                Detection
+                            </a>
+
+                        <?php else: ?>
+
+                            <a
+                                href="login.php"
+                                class="nav-link">
+                                Detection
+                            </a>
+
+                        <?php endif; ?>
+
                     </li>
 
 
                     <li>
-                        <a
-                            href="#"
-                            class="nav-link no-underline">
-                            Security Quiz
-                        </a>
+
+                        <?php if ($isLoggedIn): ?>
+
+                            <a
+                                href="quiz.php"
+                                class="nav-link no-underline">
+
+                                Security Quiz
+
+                            </a>
+
+                        <?php else: ?>
+
+                            <a
+                                href="login.php"
+                                class="nav-link no-underline">
+
+                                Security Quiz
+
+                            </a>
+
+                        <?php endif; ?>
+
                     </li>
 
 
@@ -1184,27 +1651,31 @@ text-[var(--muted)]
 
 
 
-            <!-- Contact -->
+
+            <!-- About System -->
+
 
             <div>
 
 
                 <h3
                     class="
-                    text-lg
-                    font-bold
-                    text-[var(--text)]
-                    mb-4
+                text-lg
+                font-bold
+                text-[var(--text)]
+                mb-4
                 ">
+
                     About System
+
                 </h3>
 
 
                 <p
                     class="
-                    text-sm
-                    text-[var(--muted)]
-                    leading-relaxed
+                text-sm
+                text-[var(--muted)]
+                leading-relaxed
                 ">
 
                     Powered by Machine Learning
@@ -1223,19 +1694,21 @@ text-[var(--muted)]
 
 
 
-        <!-- Bottom Copyright -->
+
+        <!-- Copyright -->
+
 
         <div
             class="
-            max-w-7xl
-            mx-auto
-            mt-10
-            pt-6
-            border-t
-            border-gray-500/20
-            text-center
-            text-sm
-            text-[var(--muted)]
+        max-w-7xl
+        mx-auto
+        mt-10
+        pt-6
+        border-t
+        border-gray-500/20
+        text-center
+        text-sm
+        text-[var(--muted)]
         ">
 
             © 2026 PhishGuard AI.
@@ -1248,6 +1721,11 @@ text-[var(--muted)]
 
 
 
+
+
+    <!-- =====================================
+     JAVASCRIPT
+===================================== -->
 
 
     <script src="js/script.js"></script>
