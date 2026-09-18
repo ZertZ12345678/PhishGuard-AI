@@ -320,35 +320,90 @@ $safeUrl = htmlspecialchars(
 
 
             <!-- =================================================
-             LOADING
-        ================================================== -->
+ LOADING WITH PERCENTAGE
+================================================== -->
+
 
             <div
+
                 id="loadingBox"
-                class="hidden py-10 text-center">
+
+                class="
+hidden
+py-10
+text-center
+">
 
 
                 <div
+
                     class="
-                    inline-block
-                    w-10
-                    h-10
-                    rounded-full
-                    border-4
-                    border-gray-500/20
-                    border-t-[var(--primary)]
-                    animate-spin
-                ">
+relative
+w-16
+h-16
+mx-auto
+">
+
+
+                    <!-- spinning circle -->
+
+                    <div
+
+                        class="
+absolute
+inset-0
+rounded-full
+border-4
+border-gray-500/20
+border-t-[var(--primary)]
+animate-spin
+">
+
+                    </div>
+
+
+
+
+                    <!-- percentage inside circle -->
+
+                    <div
+
+                        id="loadingPercent"
+
+                        class="
+absolute
+inset-0
+flex
+items-center
+justify-center
+text-sm
+font-bold
+text-[var(--primary)]
+">
+
+                        0%
+
+                    </div>
+
+
+
                 </div>
 
 
+
+
+
                 <p
+
                     class="
-                    mt-4
-                    text-[var(--muted)]
-                ">
+mt-5
+text-[var(--muted)]
+">
+
                     Analyzing URL...
+
                 </p>
+
 
 
             </div>
@@ -1256,10 +1311,17 @@ $safeUrl = htmlspecialchars(
         // START LOADING
         // ========================================================
 
+
+        let loadingInterval;
+
+
+
         function startLoading() {
 
 
-            loadingBox.classList.remove("hidden");
+            loadingBox.classList.remove(
+                "hidden"
+            );
 
 
             analyzeButton.disabled = true;
@@ -1273,35 +1335,119 @@ $safeUrl = htmlspecialchars(
 
             analyzeButton.innerHTML = `
 
-        <span
-            class="
-                inline-block
-                w-4
-                h-4
-                border-2
-                border-white/30
-                border-t-white
-                rounded-full
-                animate-spin
-            "
-        ></span>
+    <span
+        class="
+        inline-block
+        w-4
+        h-4
+        border-2
+        border-white/30
+        border-t-white
+        rounded-full
+        animate-spin
+        "
+    ></span>
 
-        Analyzing...
+    Analyzing...
 
     `;
 
-        }
 
+
+            // Start percentage
+
+            let percent = 1;
+
+
+            const percentText =
+                document.getElementById(
+                    "loadingPercent"
+                );
+
+
+
+            loadingInterval =
+                setInterval(
+                    function() {
+
+
+                        if (percent < 95) {
+
+
+                            percent +=
+                                Math.floor(
+                                    Math.random() * 10
+                                );
+
+
+
+                            if (percent > 95) {
+
+                                percent = 95;
+
+                            }
+
+
+
+                            percentText.textContent =
+                                percent + "%";
+
+
+                        }
+
+
+                    },
+                    150
+                );
+
+
+        }
 
 
         // ========================================================
         // STOP LOADING
         // ========================================================
 
+
         function stopLoading() {
 
 
-            loadingBox.classList.add("hidden");
+
+            clearInterval(
+                loadingInterval
+            );
+
+
+
+            const percentText =
+                document.getElementById(
+                    "loadingPercent"
+                );
+
+
+
+            percentText.textContent =
+                "100%";
+
+
+
+
+
+            setTimeout(
+                function() {
+
+
+                    loadingBox.classList.add(
+                        "hidden"
+                    );
+
+
+
+                },
+                300
+            );
+
+
 
 
             analyzeButton.disabled = false;
@@ -1315,6 +1461,7 @@ $safeUrl = htmlspecialchars(
 
             analyzeButton.innerHTML =
                 "Analyze URL";
+
 
         }
 

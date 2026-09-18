@@ -229,13 +229,7 @@
                     </li>
 
 
-                    <li>
-                        <a
-                            href="detection.php"
-                            class="nav-link no-underline">
-                            Detection
-                        </a>
-                    </li>
+
 
                 </ul>
 
@@ -278,12 +272,11 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="detection.php"
                             class="nav-link no-underline">
-                            Cybersecurity Tips
+                            Detection
                         </a>
                     </li>
-
 
                     <li>
                         <a

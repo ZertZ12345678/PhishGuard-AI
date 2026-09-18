@@ -1,102 +1,193 @@
 <?php
 
-header("Content-Type: application/json; charset=UTF-8");
+session_start();
+
+
+header(
+    "Content-Type: application/json; charset=UTF-8"
+);
+
+
+
+// ======================================================
+// DATABASE CONNECTION
+// ======================================================
+
+include "db_connection.php";
+
+
 
 
 // ======================================================
 // 1. ONLY ALLOW POST REQUESTS
 // ======================================================
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+
+if (
+    $_SERVER["REQUEST_METHOD"] !== "POST"
+) {
+
 
     http_response_code(405);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "Invalid request method."
+
+        "message" =>
+        "Invalid request method."
+
     ]);
+
 
     exit;
 }
+
+
+
+
 
 
 // ======================================================
 // 2. READ JSON FROM detection.php
 // ======================================================
 
-$rawInput = file_get_contents("php://input");
 
-$input = json_decode(
-    $rawInput,
-    true
-);
+$rawInput =
+    file_get_contents(
+        "php://input"
+    );
 
 
-if (!is_array($input)) {
+
+$input =
+    json_decode(
+        $rawInput,
+        true
+    );
+
+
+
+
+
+if (
+    !is_array($input)
+) {
+
 
     http_response_code(400);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "Invalid request data."
+
+        "message" =>
+        "Invalid request data."
+
     ]);
+
 
     exit;
 }
+
+
+
+
+
 
 
 // ======================================================
 // 3. GET URL
 // ======================================================
 
-$url = trim(
-    $input["url"] ?? ""
-);
+
+$url =
+    trim(
+        $input["url"] ?? ""
+    );
 
 
-if ($url === "") {
+
+
+
+if (
+    $url === ""
+) {
+
 
     http_response_code(400);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "Please enter a URL."
+
+        "message" =>
+        "Please enter a URL."
+
     ]);
+
 
     exit;
 }
+
+
+
+
+
+
 
 
 // ======================================================
 // 4. NORMALIZE URL
 // ======================================================
 
-// If user enters:
-// google.com
-//
-// Convert to:
-// http://google.com
 
-if (!preg_match('/^https?:\/\//i', $url)) {
+if (
+    !preg_match(
+        '/^https?:\/\//i',
+        $url
+    )
+) {
 
-    $url = "http://" . $url;
+
+    $url =
+        "http://" . $url;
 }
+
+
+
+
 
 
 // Validate URL
 
-if (!filter_var($url, FILTER_VALIDATE_URL)) {
+
+if (
+    !filter_var(
+        $url,
+        FILTER_VALIDATE_URL
+    )
+) {
+
 
     http_response_code(400);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "Please enter a valid URL."
+
+        "message" =>
+        "Please enter a valid URL."
+
     ]);
+
 
     exit;
 }
-
 
 // ======================================================
 // 5. PROJECT PATH
@@ -109,19 +200,27 @@ if (!filter_var($url, FILTER_VALIDATE_URL)) {
 // dirname(__DIR__, 2)
 //
 // goes back to:
-//
 // AI-Phishing-Detection-System/
 // ======================================================
 
-$projectRoot = dirname(__DIR__, 2);
+
+$projectRoot =
+    dirname(
+        __DIR__,
+        2
+    );
 
 
-// Machine learning folder
+
+
+// Machine Learning folder
 
 $machineLearningDir =
     $projectRoot
     . DIRECTORY_SEPARATOR
     . "machine_learning";
+
+
 
 
 // predict.py
@@ -130,6 +229,8 @@ $predictScript =
     $machineLearningDir
     . DIRECTORY_SEPARATOR
     . "predict.py";
+
+
 
 
 // Model file
@@ -142,113 +243,175 @@ $modelPath =
     . "phishing_model.pkl";
 
 
+
+
+
+
+
+
 // ======================================================
-// 6. YOUR PYTHON PATH
-// ======================================================
-//
-// From your computer:
-//
-// C:\Users\Dell\AppData\Local\Programs\Python\Python314\python.exe
+// 6. PYTHON PATH
 // ======================================================
 
+
 $pythonExe =
+
     "C:\\Users\\Dell\\AppData\\Local\\Programs\\Python\\Python314\\python.exe";
+
+
+
+
+
+
 
 
 // ======================================================
 // 7. CHECK REQUIRED FILES
 // ======================================================
 
-if (!file_exists($pythonExe)) {
+
+if (
+    !file_exists($pythonExe)
+) {
+
 
     http_response_code(500);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "Python executable was not found.",
-        "path" => $pythonExe
+
+        "message" =>
+        "Python executable was not found.",
+
+        "path" =>
+        $pythonExe
+
     ]);
+
 
     exit;
 }
 
 
-if (!file_exists($predictScript)) {
+
+
+
+if (
+    !file_exists($predictScript)
+) {
+
 
     http_response_code(500);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "predict.py was not found.",
-        "path" => $predictScript
+
+        "message" =>
+        "predict.py was not found.",
+
+        "path" =>
+        $predictScript
+
     ]);
+
 
     exit;
 }
 
 
-if (!file_exists($modelPath)) {
+
+
+
+if (
+    !file_exists($modelPath)
+) {
+
 
     http_response_code(500);
 
+
     echo json_encode([
+
         "success" => false,
-        "message" => "The trained AI model was not found.",
-        "path" => $modelPath
+
+        "message" =>
+        "The trained AI model was not found.",
+
+        "path" =>
+        $modelPath
+
     ]);
+
 
     exit;
 }
 
 
+
+
+
+
+
+
 // ======================================================
-// 8. RUN PYTHON
+// 8. RUN PYTHON AI MODEL
 // ======================================================
-//
-// Browser
-//   ↓
-// detection.php
-//   ↓
-// detect_process.php
-//   ↓
-// predict.py
-//   ↓
-// phishing_model.pkl
-//
-// proc_open lets us capture:
-// stdout = JSON result
-// stderr = Python errors
-// separately.
-// ======================================================
+
+
 
 $command = [
+
     $pythonExe,
+
     $predictScript,
+
     $url
+
 ];
+
+
+
 
 
 $descriptorSpec = [
 
-    // STDIN
+
     0 => [
+
         "pipe",
+
         "r"
+
     ],
 
-    // STDOUT
+
     1 => [
+
         "pipe",
+
         "w"
+
     ],
 
-    // STDERR
+
     2 => [
+
         "pipe",
+
         "w"
+
     ]
 
+
 ];
+
+
+
+
 
 
 $process = proc_open(
@@ -264,121 +427,211 @@ $process = proc_open(
     null,
 
     [
+
         "bypass_shell" => true
+
     ]
 
 );
 
 
-// ======================================================
-// 9. CHECK IF PYTHON STARTED
-// ======================================================
 
-if (!is_resource($process)) {
+
+
+
+if (
+    !is_resource($process)
+) {
+
 
     http_response_code(500);
 
-    echo json_encode([
-        "success" => false,
-        "message" => "Unable to start the AI detection engine."
-    ]);
-
-    exit;
-}
-
-
-// We don't send anything through STDIN
-
-fclose($pipes[0]);
-
-
-// Read Python JSON output
-
-$stdout = stream_get_contents(
-    $pipes[1]
-);
-
-fclose($pipes[1]);
-
-
-// Read Python errors separately
-
-$stderr = stream_get_contents(
-    $pipes[2]
-);
-
-fclose($pipes[2]);
-
-
-// Get Python exit code
-
-$exitCode = proc_close(
-    $process
-);
-
-
-// ======================================================
-// 10. PYTHON ERROR
-// ======================================================
-
-if ($exitCode !== 0) {
-
-    http_response_code(500);
 
     echo json_encode([
-        "success" => false,
-        "message" => "The AI detection engine failed.",
-        "python_error" => trim($stderr)
-    ]);
 
-    exit;
-}
-
-
-// ======================================================
-// 11. CHECK EMPTY RESULT
-// ======================================================
-
-$stdout = trim($stdout);
-
-
-if ($stdout === "") {
-
-    http_response_code(500);
-
-    echo json_encode([
-        "success" => false,
-        "message" => "The AI detection engine returned no result.",
-        "python_error" => trim($stderr)
-    ]);
-
-    exit;
-}
-
-
-// ======================================================
-// 12. CONVERT PYTHON JSON
-// ======================================================
-
-$result = json_decode(
-    $stdout,
-    true
-);
-
-
-// ======================================================
-// 13. INVALID JSON
-// ======================================================
-
-if (!is_array($result)) {
-
-    http_response_code(500);
-
-    echo json_encode([
         "success" => false,
 
         "message" =>
-        "The AI detection engine returned an invalid response.",
+        "Unable to start AI detection engine."
+
+    ]);
+
+
+    exit;
+}
+
+
+
+
+
+
+// No STDIN input
+
+fclose(
+    $pipes[0]
+);
+
+
+
+
+
+
+// Python output
+
+$stdout =
+    stream_get_contents(
+        $pipes[1]
+    );
+
+
+fclose(
+    $pipes[1]
+);
+
+
+
+
+
+
+// Python errors
+
+$stderr =
+    stream_get_contents(
+        $pipes[2]
+    );
+
+
+fclose(
+    $pipes[2]
+);
+
+
+
+
+
+
+// Exit code
+
+$exitCode =
+    proc_close(
+        $process
+    );
+
+
+
+
+
+
+
+// ======================================================
+// 9. PYTHON ERROR
+// ======================================================
+
+
+if (
+    $exitCode !== 0
+) {
+
+
+    http_response_code(500);
+
+
+    echo json_encode([
+
+        "success" => false,
+
+        "message" =>
+        "AI detection engine failed.",
+
+        "python_error" =>
+        trim($stderr)
+
+    ]);
+
+
+    exit;
+}
+
+
+
+
+
+
+// ======================================================
+// 10. EMPTY RESULT
+// ======================================================
+
+
+$stdout =
+    trim(
+        $stdout
+    );
+
+
+
+
+if (
+    $stdout === ""
+) {
+
+
+    http_response_code(500);
+
+
+    echo json_encode([
+
+        "success" => false,
+
+        "message" =>
+        "AI engine returned no result.",
+
+        "python_error" =>
+        trim($stderr)
+
+    ]);
+
+
+    exit;
+}
+
+// ======================================================
+// 11. CONVERT PYTHON JSON RESULT
+// ======================================================
+
+
+$result = json_decode(
+
+    $stdout,
+
+    true
+
+);
+
+
+
+
+
+
+
+// ======================================================
+// 12. INVALID JSON
+// ======================================================
+
+
+if (
+    !is_array($result)
+) {
+
+
+    http_response_code(500);
+
+
+    echo json_encode([
+
+        "success" => false,
+
+        "message" =>
+        "AI engine returned invalid response.",
 
         "python_output" =>
         $stdout,
@@ -388,46 +641,223 @@ if (!is_array($result)) {
 
         "json_error" =>
         json_last_error_msg()
+
     ]);
+
 
     exit;
 }
 
 
+
+
+
+
+
+
 // ======================================================
-// 14. ERROR RETURNED BY predict.py
+// 13. CHECK AI RESULT
 // ======================================================
 
+
 if (
-    !isset($result["success"]) ||
+
+    !isset($result["success"])
+
+    ||
+
     $result["success"] !== true
+
 ) {
+
 
     http_response_code(500);
 
+
     echo json_encode([
+
         "success" => false,
 
         "message" =>
+
         $result["message"]
-            ?? "AI prediction failed."
+
+            ??
+
+            "AI prediction failed."
+
     ]);
+
 
     exit;
 }
 
 
+
+
+
+
+
+
 // ======================================================
-// 15. SUCCESS
-// ======================================================
-//
-// Return the REAL ML result to detection.php
+// 14. SAVE DETECTION HISTORY
 // ======================================================
 
+
+
+if (
+
+    isset($_SESSION["UserID"])
+
+) {
+
+
+    $userID =
+
+        $_SESSION["UserID"];
+
+
+
+
+    $detectedURL =
+
+        $result["url"]
+
+        ??
+
+        $url;
+
+
+
+
+
+    $predictionResult =
+
+        $result["status"]
+
+        ??
+
+        "Unknown";
+
+
+
+
+
+    $confidenceScore =
+
+        $result["ai_confidence"]
+
+        ??
+
+        0;
+
+
+
+
+
+
+
+    $historySQL =
+
+        "
+    INSERT INTO url_history
+
+    (
+
+        UserID,
+
+        URL,
+
+        PredictionResult,
+
+        ConfidenceScore
+
+    )
+
+    VALUES
+
+    (
+
+        ?,
+
+        ?,
+
+        ?,
+
+        ?
+
+    )
+    ";
+
+
+
+
+
+
+    $historyStmt =
+
+        $conn->prepare(
+
+            $historySQL
+
+        );
+
+
+
+
+
+
+    if (
+
+        $historyStmt
+
+    ) {
+
+
+
+        $historyStmt->bind_param(
+
+            "issd",
+
+            $userID,
+
+            $detectedURL,
+
+            $predictionResult,
+
+            $confidenceScore
+
+        );
+
+
+
+
+
+        $historyStmt->execute();
+
+
+
+
+
+        $historyStmt->close();
+    }
+}
+
+// ======================================================
+// 15. RETURN AI RESULT TO detection.php
+// ======================================================
+
+
 echo json_encode(
+
     $result,
-    JSON_UNESCAPED_SLASHES |
+
+    JSON_UNESCAPED_SLASHES
+        |
         JSON_UNESCAPED_UNICODE
+
 );
+
+
 
 exit;
