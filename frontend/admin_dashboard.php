@@ -52,7 +52,7 @@ $totalQuiz =
 // Detection
 
 $detectionQuery =
-    "SELECT COUNT(*) AS total FROM detection_history";
+    "SELECT COUNT(*) AS total FROM url_history";
 
 $detectionResult =
     $conn->query($detectionQuery);
@@ -204,7 +204,7 @@ no-underline
 
             <a
 
-                href="user_management.php"
+                href="show_user.php"
 
                 class="
 flex
@@ -267,13 +267,9 @@ no-underline
 
             </a>
 
-
-
-
-
             <a
 
-                href="reports.php"
+                href="admin_profile.php"
 
                 class="
 flex
@@ -286,9 +282,12 @@ nav-link
 no-underline
 ">
 
-                📈 Reports
+                👤 Edit Profile
 
             </a>
+
+
+
 
 
 
@@ -359,7 +358,7 @@ cursor-pointer
 
             <a
 
-                href="index.php"
+                href="logout.php"
 
                 class="
 block

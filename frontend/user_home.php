@@ -31,17 +31,17 @@
                 Detection
             </a>
 
-            <a href="awareness.php"
+            <a href="awareness.php?source=user"
                 class="nav-link">
                 Awareness
             </a>
 
-            <a href="#"
+            <a href="take_quiz.php"
                 class="nav-link">
                 Quiz
             </a>
 
-            <a href="#"
+            <a href="user_dashboard.php"
                 class="nav-link">
                 Dashboard
             </a>
@@ -116,6 +116,412 @@
                 </p>
 
             </div>
+
+
+        </div>
+
+
+    </section>
+
+    <!-- HOW IT WORKS -->
+
+
+    <section
+        class="
+px-10
+py-16
+">
+
+
+        <h2
+            class="
+text-3xl
+font-bold
+text-center
+text-[var(--secondary)]
+mb-10
+">
+
+            How PhishGuard AI Works
+
+        </h2>
+
+
+
+
+
+        <div
+            class="
+grid
+md:grid-cols-3
+gap-8
+">
+
+
+
+
+
+            <div
+                class="
+bg-[var(--card)]
+p-8
+rounded-xl
+shadow
+text-center
+">
+
+                <h3
+                    class="
+text-xl
+font-bold
+text-[var(--secondary)]
+">
+
+                    1. Detect
+
+                </h3>
+
+
+                <p class="mt-4">
+
+                    Analyze suspicious URLs using
+                    AI-powered phishing detection.
+
+                </p>
+
+
+            </div>
+
+
+
+
+
+
+
+            <div
+                class="
+bg-[var(--card)]
+p-8
+rounded-xl
+shadow
+text-center
+">
+
+                <h3
+                    class="
+text-xl
+font-bold
+text-[var(--secondary)]
+">
+
+                    2. Learn
+
+                </h3>
+
+
+                <p class="mt-4">
+
+                    Improve cybersecurity knowledge
+                    through awareness materials.
+
+                </p>
+
+
+            </div>
+
+
+
+
+
+
+
+            <div
+                class="
+bg-[var(--card)]
+p-8
+rounded-xl
+shadow
+text-center
+">
+
+                <h3
+                    class="
+text-xl
+font-bold
+text-[var(--secondary)]
+">
+
+                    3. Test
+
+                </h3>
+
+
+                <p class="mt-4">
+
+                    Complete quizzes and evaluate
+                    your security awareness.
+
+                </p>
+
+
+            </div>
+
+
+
+
+        </div>
+
+
+    </section>
+
+    <!-- SECURITY TIPS -->
+
+
+    <section
+        class="
+px-10
+py-16
+">
+
+
+        <div
+            class="
+max-w-6xl
+mx-auto
+">
+
+
+            <h2
+                class="
+text-3xl
+font-bold
+text-center
+text-[var(--secondary)]
+mb-10
+">
+
+                Cybersecurity Tips
+
+            </h2>
+
+
+
+
+
+            <div
+                class="
+grid
+md:grid-cols-2
+gap-6
+">
+
+
+
+
+
+                <div
+                    class="
+bg-[var(--card)]
+p-6
+rounded-xl
+">
+
+                    🔐
+
+                    <strong>
+                        Use Strong Passwords
+                    </strong>
+
+                    <p class="mt-2">
+
+                        Create unique passwords and avoid
+                        sharing them with others.
+
+                    </p>
+
+                </div>
+
+
+
+
+
+
+
+                <div
+                    class="
+bg-[var(--card)]
+p-6
+rounded-xl
+">
+
+                    📧
+
+                    <strong>
+                        Be Careful With Emails
+                    </strong>
+
+
+                    <p class="mt-2">
+
+                        Avoid clicking suspicious links
+                        from unknown senders.
+
+                    </p>
+
+
+                </div>
+
+
+
+
+
+
+
+
+                <div
+                    class="
+bg-[var(--card)]
+p-6
+rounded-xl
+">
+
+                    🌐
+
+                    <strong>
+                        Check Website URLs
+                    </strong>
+
+
+                    <p class="mt-2">
+
+                        Verify website addresses before
+                        entering personal information.
+
+                    </p>
+
+
+                </div>
+
+
+
+
+
+
+
+
+                <div
+                    class="
+bg-[var(--card)]
+p-6
+rounded-xl
+">
+
+                    🛡
+
+                    <strong>
+                        Keep Software Updated
+                    </strong>
+
+
+                    <p class="mt-2">
+
+                        Regular updates improve security
+                        and protect against threats.
+
+                    </p>
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+    <!-- CTA -->
+
+
+    <section
+        class="
+px-10
+py-20
+text-center
+">
+
+
+        <h2
+            class="
+text-3xl
+font-bold
+text-[var(--secondary)]
+">
+
+            Stay Safe Online With PhishGuard AI
+
+        </h2>
+
+
+
+        <p
+            class="
+mt-4
+">
+
+            Detect threats, learn cybersecurity,
+            and improve your online protection.
+
+        </p>
+
+
+
+        <div
+            class="
+mt-8
+flex
+justify-center
+gap-5
+">
+
+
+            <a
+                href="detection.php"
+                class="
+px-8
+py-3
+bg-blue-600
+text-white
+rounded-lg
+no-underline
+">
+
+                Check URL
+
+            </a>
+
+
+
+            <a
+                href="take_quiz.php"
+                class="
+px-8
+py-3
+bg-green-600
+text-white
+rounded-lg
+no-underline
+">
+
+                Take Quiz
+
+            </a>
+
 
 
         </div>
@@ -204,7 +610,7 @@
 
                     <li>
                         <a
-                            href="index.php"
+                            href="user_home.php"
                             class="nav-link no-underline">
                             Home
                         </a>
@@ -262,10 +668,9 @@
                 ">
 
                     <li>
-                        <a
-                            href="awareness.php"
-                            class="nav-link no-underline">
-                            Phishing Awareness
+                        <a href="awareness.php?source=user"
+                            class="nav-link">
+                            Awareness
                         </a>
                     </li>
 
@@ -280,7 +685,7 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="take_quiz.php"
                             class="nav-link no-underline">
                             Security Quiz
                         </a>
@@ -318,10 +723,7 @@
                     leading-relaxed
                 ">
 
-                    Powered by Machine Learning
-                    technology using a Random Forest
-                    classification model for phishing
-                    URL detection.
+                    Powered by AI using Random Forest and CNN models for phishing URL detection and cybersecurity analysis.
 
                 </p>
 

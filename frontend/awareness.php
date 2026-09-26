@@ -2,22 +2,16 @@
 
 session_start();
 
-
 // =====================================
 // LOGOUT
 // =====================================
 
 if (isset($_GET["logout"])) {
-
     session_unset();
-
     session_destroy();
-
     header("Location: index.php");
-
     exit();
 }
-
 
 // =====================================
 // LOGIN STATUS
@@ -26,8 +20,22 @@ if (isset($_GET["logout"])) {
 $isLoggedIn =
     isset($_SESSION["UserID"]) &&
     isset($_SESSION["Role"]) &&
-    $_SESSION["Role"] == "User";
+    $_SESSION["Role"] === "User";
 
+// =====================================
+// AWARENESS PAGE MODE
+// =====================================
+// index.php    -> awareness.php?source=public
+// user_home.php -> awareness.php?source=user
+//
+// A logged-in user with no source is also
+// treated as the user version.
+
+$source = $_GET["source"] ?? "";
+
+$isUserAwareness =
+    ($source === "user") ||
+    ($source === "" && $isLoggedIn);
 
 // =====================================
 // ADMIN ACCESS
@@ -35,18 +43,13 @@ $isLoggedIn =
 
 if (
     isset($_SESSION["Role"]) &&
-    $_SESSION["Role"] == "Admin"
+    $_SESSION["Role"] === "Admin"
 ) {
-
     header("Location: admin_dashboard.php");
-
     exit();
 }
 
 ?>
-
-
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -56,10 +59,7 @@ if (
 
     <meta charset="UTF-8">
 
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
     <title>
@@ -67,276 +67,135 @@ if (
     </title>
 
 
-    <!-- Tailwind CSS -->
-
     <script src="https://cdn.tailwindcss.com"></script>
 
-
-    <!-- Custom CSS -->
-
-    <link
-        rel="stylesheet"
-        href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 
 
 </head>
 
 
 
-
 <body
     class="
-    bg-[var(--bg)]
-    text-[var(--text)]
-    transition
-    duration-300
-    ">
-
-
-
+bg-[var(--bg)]
+text-[var(--text)]
+transition
+duration-300
+">
 
 
     <!-- =====================================
      NAVBAR
 ===================================== -->
 
-
     <header
         class="
-    flex
-    justify-between
-    items-center
-    px-10
-    py-5
-    bg-[var(--nav)]
-    ">
-
-
-        <!-- Logo -->
-
-
-        <a
-            href="<?php echo $isLoggedIn ? 'user_home.php' : 'index.php'; ?>"
-            class="
-        text-2xl
-        font-bold
-        text-[var(--secondary)]
-        no-underline
+            flex
+            justify-between
+            items-center
+            px-10
+            py-5
+            bg-[var(--nav)]
         ">
 
-            🛡 PhishGuard AI
+        <!-- LOGO -->
 
+        <a
+            href="<?php echo $isUserAwareness ? 'user_home.php' : 'index.php'; ?>"
+            class="
+                text-2xl
+                font-bold
+                text-[var(--secondary)]
+                no-underline
+            ">
+            🛡 PhishGuard AI
         </a>
 
 
+        <nav class="flex items-center gap-6">
 
-
-
-        <!-- Navigation -->
-
-
-        <nav
-            class="
-        flex
-        items-center
-        gap-6
-        ">
-
-
-
-            <!-- Home -->
-
+            <!-- HOME -->
 
             <a
-                href="<?php echo $isLoggedIn ? 'user_home.php' : 'index.php'; ?>"
+                href="<?php echo $isUserAwareness ? 'user_home.php' : 'index.php'; ?>"
                 class="nav-link">
-
                 Home
-
             </a>
 
 
-
-
-
-            <!-- Detection -->
-
-            <?php if ($isLoggedIn): ?>
-
-                <a
-                    href="detection.php"
-                    class="nav-link">
-                    Detection
-                </a>
-
-            <?php else: ?>
-
-                <a
-                    href="login.php"
-                    class="nav-link">
-                    Detection
-                </a>
-
-            <?php endif; ?>
-
-
-
-
-
-            <!-- Awareness -->
-
+            <!-- DETECTION -->
 
             <a
-                href="awareness.php"
-
-                class="
-            text-[var(--primary)]
-            font-semibold
-            no-underline
-            ">
-
-                Awareness
-
+                href="<?php echo $isUserAwareness ? 'detection.php' : 'login.php'; ?>"
+                class="nav-link">
+                Detection
             </a>
 
 
+            <!-- AWARENESS -->
+
+            <a
+                href="<?php echo $isUserAwareness
+                            ? 'awareness.php?source=user'
+                            : 'awareness.php?source=public'; ?>"
+                class="text-[var(--primary)] font-semibold no-underline">
+                Awareness
+            </a>
 
 
+            <!-- QUIZ -->
 
-            <!-- Quiz -->
-
-
-            <?php if ($isLoggedIn): ?>
-
-
-                <a
-                    href="quiz.php"
-                    class="nav-link">
-
-                    Quiz
-
-                </a>
+            <a
+                href="<?php echo $isUserAwareness ? 'take_quiz.php' : 'login.php'; ?>"
+                class="nav-link">
+                Quiz
+            </a>
 
 
-            <?php else: ?>
+            <!-- USER / PUBLIC -->
 
-
-                <a
-                    href="login.php"
-                    class="nav-link">
-
-                    Quiz
-
-                </a>
-
-
-            <?php endif; ?>
-
-
-
-
-
-            <!-- =================================
-             LOGGED-IN USER
-        ================================= -->
-
-
-            <?php if ($isLoggedIn): ?>
-
-
-                <!-- Dashboard -->
-
+            <?php if ($isUserAwareness): ?>
 
                 <a
                     href="user_home.php"
                     class="nav-link">
-
                     Dashboard
-
                 </a>
-
-
-
-
-
-                <!-- Logout -->
-
 
                 <a
                     href="awareness.php?logout=1"
                     class="nav-link">
-
                     Logout
-
                 </a>
 
-
-
-
             <?php else: ?>
-
-
-
-                <!-- =================================
-                 GUEST USER
-            ================================= -->
-
-
-                <!-- Login -->
-
 
                 <a
                     href="login.php"
                     class="nav-link">
-
                     Login
-
                 </a>
-
-
-
-
-
-                <!-- Register -->
-
 
                 <a
                     href="register.php"
                     class="nav-link">
-
                     Register
-
                 </a>
-
-
 
             <?php endif; ?>
 
 
-
-
-
-            <!-- Theme Toggle -->
-
+            <!-- THEME -->
 
             <button
                 id="theme-toggle"
-
-                class="
-            text-2xl
-            bg-transparent
-            border-none
-            cursor-pointer
-            ">
-
+                type="button"
+                class="text-2xl bg-transparent border-none cursor-pointer">
                 ☀
-
             </button>
 
-
-
         </nav>
-
 
     </header>
 
@@ -1409,326 +1268,292 @@ if (
 
 
 
-    <!-- =====================================
+    <!-- =====================================================
      FOOTER
-===================================== -->
-
+====================================================== -->
 
     <footer
         class="
-    bg-[var(--nav)]
-    mt-20
-    px-6
-    py-12
-    ">
-
+            bg-[var(--nav)]
+            mt-20
+            px-6
+            py-12
+        ">
 
         <div
             class="
-        max-w-7xl
-        mx-auto
-        grid
-        md:grid-cols-4
-        gap-10
-        ">
-
-
+                max-w-7xl
+                mx-auto
+                grid
+                md:grid-cols-4
+                gap-10
+            ">
 
             <!-- Brand -->
 
-
             <div>
 
-
                 <a
-                    href="index.php"
-                    class="
-                text-2xl
-                font-bold
-                text-[var(--secondary)]
-                no-underline
-                ">
-
+                    href="<?php echo $isUserAwareness ? 'user_home.php' : 'index.php'; ?>"
+                    class="text-2xl font-bold text-[var(--secondary)] no-underline">
                     🛡 PhishGuard AI
-
                 </a>
 
-
-
                 <p
-                    class="
-                mt-4
-                text-[var(--muted)]
-                text-sm
-                leading-relaxed
-                ">
-
+                    class="mt-4 text-[var(--muted)] text-sm leading-relaxed">
                     An AI-based phishing URL detection and
                     cybersecurity awareness system that helps
                     users identify online threats and improve
                     digital security.
-
                 </p>
 
-
             </div>
-
-
-
 
 
             <!-- Quick Links -->
 
-
             <div>
 
-
-                <h3
-                    class="
-                text-lg
-                font-bold
-                text-[var(--text)]
-                mb-4
-                ">
-
+                <h3 class="text-lg font-bold text-[var(--text)] mb-4">
                     Quick Links
-
                 </h3>
 
-
-
-                <ul
-                    class="
-                space-y-3
-                text-sm
-                ">
-
+                <ul class="space-y-3 text-sm">
 
                     <li>
-
                         <a
-                            href="index.php"
+                            href="<?php echo $isUserAwareness ? 'user_home.php' : 'index.php'; ?>"
                             class="nav-link no-underline">
-
                             Home
-
                         </a>
-
                     </li>
 
 
-                    <li>
+                    <?php if ($isUserAwareness): ?>
 
-                        <a
-                            href="login.php"
-                            class="nav-link no-underline">
+                        <!-- USER -->
 
-                            Login
+                        <li>
+                            <a
+                                href="detection.php"
+                                class="nav-link no-underline">
+                                Detection
+                            </a>
+                        </li>
 
-                        </a>
+                        <li>
+                            <a
+                                href="take_quiz.php"
+                                class="nav-link no-underline">
+                                Quiz
+                            </a>
+                        </li>
 
-                    </li>
+                    <?php else: ?>
 
+                        <!-- PUBLIC -->
 
-                    <li>
+                        <li>
+                            <a
+                                href="login.php"
+                                class="nav-link no-underline">
+                                Login
+                            </a>
+                        </li>
 
-                        <a
-                            href="register.php"
-                            class="nav-link no-underline">
+                        <li>
+                            <a
+                                href="register.php"
+                                class="nav-link no-underline">
+                                Register
+                            </a>
+                        </li>
 
-                            Register
-
-                        </a>
-
-                    </li>
-
-
+                    <?php endif; ?>
 
                 </ul>
 
-
             </div>
-
-
-
 
 
             <!-- Security -->
 
-
             <div>
 
-
-                <h3
-                    class="
-                text-lg
-                font-bold
-                text-[var(--text)]
-                mb-4
-                ">
-
+                <h3 class="text-lg font-bold text-[var(--text)] mb-4">
                     Security
-
                 </h3>
 
-
-
-                <ul
-                    class="
-                space-y-3
-                text-sm
-                ">
-
+                <ul class="space-y-3 text-sm">
 
                     <li>
-
                         <a
-                            href="awareness.php"
+                            href="<?php echo $isUserAwareness
+                                        ? 'awareness.php?source=user'
+                                        : 'awareness.php?source=public'; ?>"
                             class="nav-link no-underline">
-
                             Phishing Awareness
-
                         </a>
-
                     </li>
 
 
-                    <li>
+                    <?php if ($isUserAwareness): ?>
 
-                        <?php if ($isLoggedIn): ?>
+                        <!-- USER -->
 
+                        <li>
                             <a
                                 href="detection.php"
-                                class="nav-link">
-                                Detection
-                            </a>
-
-                        <?php else: ?>
-
-                            <a
-                                href="login.php"
-                                class="nav-link">
-                                Detection
-                            </a>
-
-                        <?php endif; ?>
-
-                    </li>
-
-
-                    <li>
-
-                        <?php if ($isLoggedIn): ?>
-
-                            <a
-                                href="quiz.php"
                                 class="nav-link no-underline">
-
-                                Security Quiz
-
+                                Detection
                             </a>
+                        </li>
 
-                        <?php else: ?>
+                        <li>
+                            <a
+                                href="take_quiz.php"
+                                class="nav-link no-underline">
+                                Security Quiz
+                            </a>
+                        </li>
 
+                    <?php else: ?>
+
+                        <!-- PUBLIC -->
+
+                        <li>
                             <a
                                 href="login.php"
                                 class="nav-link no-underline">
-
-                                Security Quiz
-
+                                Detection
                             </a>
+                        </li>
 
-                        <?php endif; ?>
+                        <li>
+                            <a
+                                href="login.php"
+                                class="nav-link no-underline">
+                                Security Quiz
+                            </a>
+                        </li>
 
-                    </li>
-
+                    <?php endif; ?>
 
                 </ul>
 
-
             </div>
-
-
-
 
 
             <!-- About System -->
 
-
             <div>
 
-
-                <h3
-                    class="
-                text-lg
-                font-bold
-                text-[var(--text)]
-                mb-4
-                ">
-
+                <h3 class="text-lg font-bold text-[var(--text)] mb-4">
                     About System
-
                 </h3>
 
-
                 <p
-                    class="
-                text-sm
-                text-[var(--muted)]
-                leading-relaxed
-                ">
-
-                    Powered by Machine Learning
-                    technology using a Random Forest
-                    classification model for phishing
-                    URL detection.
-
+                    class="text-sm text-[var(--muted)] leading-relaxed">
+                    Powered by AI using Random Forest and CNN models for phishing URL detection and cybersecurity analysis.
                 </p>
-
 
             </div>
 
-
         </div>
 
 
-
-
-
-        <!-- Copyright -->
-
+        <!-- Bottom Copyright -->
 
         <div
             class="
-        max-w-7xl
-        mx-auto
-        mt-10
-        pt-6
-        border-t
-        border-gray-500/20
-        text-center
-        text-sm
-        text-[var(--muted)]
-        ">
-
+                max-w-7xl
+                mx-auto
+                mt-10
+                pt-6
+                border-t
+                border-gray-500/20
+                text-center
+                text-sm
+                text-[var(--muted)]
+            ">
             © 2026 PhishGuard AI.
             All rights reserved.
-
         </div>
-
 
     </footer>
 
 
+    <!-- Back To Top Button -->
+
+    <button
+        id="backToTop"
+        type="button"
+        aria-label="Back to top"
+        style="
+        display: none;
+        position: fixed;
+        right: 25px;
+        bottom: 25px;
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        background: #2563eb;
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    ">
+        ↑
+    </button>
+
+    <script>
+        (function() {
+
+            const backToTop = document.getElementById("backToTop");
 
 
+            if (!backToTop) {
+                return;
+            }
 
-    <!-- =====================================
-     JAVASCRIPT
-===================================== -->
+
+            function checkScroll() {
+
+                if (window.scrollY > 200) {
+
+                    backToTop.style.display = "block";
+
+                } else {
+
+                    backToTop.style.display = "none";
+
+                }
+
+            }
 
 
-    <script src="js/script.js"></script>
+            window.addEventListener("scroll", checkScroll);
+
+
+            backToTop.addEventListener("click", function() {
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            });
+
+
+            // Check current position when page loads
+            checkScroll();
+
+
+        })();
+    </script>
 
 
 </body>

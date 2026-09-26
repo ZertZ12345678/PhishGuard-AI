@@ -463,7 +463,7 @@ no-underline
 
             <a
 
-                href="user_management.php"
+                href="show_user.php"
 
                 class="
 block
@@ -524,16 +524,14 @@ no-underline
             </a>
 
 
-
-
-
-
             <a
 
-                href="reports.php"
+                href="admin_profile.php"
 
                 class="
-block
+flex
+items-center
+gap-3
 px-4
 py-3
 rounded-lg
@@ -541,9 +539,10 @@ nav-link
 no-underline
 ">
 
-                📈 Reports
+                👤 Edit Profile
 
             </a>
+
 
 
 
@@ -622,7 +621,7 @@ cursor-pointer
 
             <a
 
-                href="index.php"
+                href="logout.php"
 
                 class="
 block
@@ -660,17 +659,15 @@ no-underline
         class="
 ml-72
 min-h-screen
-pl-24
-pr-10
-py-10
+p-10
+w-[calc(100%-18rem)]
 ">
 
 
         <div
 
             class="
-max-w-5xl
-mx-auto
+w-full
 ">
 
 
@@ -719,8 +716,8 @@ text-[var(--muted)]
 
                 class="
 mt-10
-max-w-2xl
-ml-10
+w-full
+max-w-6xl
 bg-[var(--card)]
 rounded-2xl
 shadow-xl
