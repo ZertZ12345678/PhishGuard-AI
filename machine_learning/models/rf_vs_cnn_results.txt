@@ -1,0 +1,49 @@
+PHISHGUARD AI
+RANDOM FOREST VS CNN
+====================
+
+Common test samples: 35306
+
+Phishing label: 0
+Legitimate label: 1
+
+MODEL COMPARISON
+----------------
+Random Forest Accuracy: 94.39%
+Random Forest Phishing Precision: 99.76%
+Random Forest Phishing Recall: 87.07%
+Random Forest Phishing F1-Score: 92.98%
+
+CNN Accuracy: 99.82%
+CNN Phishing Precision: 100.00%
+CNN Phishing Recall: 99.59%
+CNN Phishing F1-Score: 99.79%
+
+RANDOM FOREST CONFUSION MATRIX
+[[13128  1950]
+ [   32 20196]]
+
+CNN CONFUSION MATRIX
+[[15016    62]
+ [    0 20228]]
+
+RANDOM FOREST CLASSIFICATION REPORT
+              precision    recall  f1-score   support
+
+    Phishing     0.9976    0.8707    0.9298     15078
+  Legitimate     0.9119    0.9984    0.9532     20228
+
+    accuracy                         0.9439     35306
+   macro avg     0.9548    0.9345    0.9415     35306
+weighted avg     0.9485    0.9439    0.9432     35306
+
+
+CNN CLASSIFICATION REPORT
+              precision    recall  f1-score   support
+
+    Phishing     1.0000    0.9959    0.9979     15078
+  Legitimate     0.9969    1.0000    0.9985     20228
+
+    accuracy                         0.9982     35306
+   macro avg     0.9985    0.9979    0.9982     35306
+weighted avg     0.9982    0.9982    0.9982     35306

@@ -1,0 +1,23 @@
+PHISHGUARD AI - CNN TEST RESULTS
+================================
+
+Test samples: 35306
+Test loss: 0.010737
+Accuracy: 99.82%
+Precision: 99.69%
+Recall: 100.00%
+F1-score: 99.85%
+
+Confusion Matrix:
+[[15016    62]
+ [    0 20228]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     1.0000    0.9959    0.9979     15078
+           1     0.9969    1.0000    0.9985     20228
+
+    accuracy                         0.9982     35306
+   macro avg     0.9985    0.9979    0.9982     35306
+weighted avg     0.9982    0.9982    0.9982     35306

@@ -17,10 +17,7 @@ if (
 }
 
 
-
 include "../backend/php/db_connection.php";
-
-
 
 
 // =====================================
@@ -30,20 +27,14 @@ include "../backend/php/db_connection.php";
 $userID = $_SESSION["UserID"];
 
 
-
-
-
 // =====================================
 // UPDATE PROFILE
 // =====================================
 
-
 $message = "";
 
 
-
 if (isset($_POST["update_profile"])) {
-
 
 
     $username =
@@ -54,9 +45,7 @@ if (isset($_POST["update_profile"])) {
         $_POST["email"];
 
 
-
     if (!empty($_POST["password"])) {
-
 
 
         $password =
@@ -64,7 +53,6 @@ if (isset($_POST["update_profile"])) {
                 $_POST["password"],
                 PASSWORD_DEFAULT
             );
-
 
 
         $sql = "
@@ -81,10 +69,8 @@ if (isset($_POST["update_profile"])) {
         ";
 
 
-
         $stmt =
             $conn->prepare($sql);
-
 
 
         $stmt->bind_param(
@@ -95,7 +81,6 @@ if (isset($_POST["update_profile"])) {
             $userID
         );
     } else {
-
 
 
         $sql = "
@@ -111,10 +96,8 @@ if (isset($_POST["update_profile"])) {
         ";
 
 
-
         $stmt =
             $conn->prepare($sql);
-
 
 
         $stmt->bind_param(
@@ -126,7 +109,6 @@ if (isset($_POST["update_profile"])) {
     }
 
 
-
     $stmt->execute();
 
 
@@ -134,20 +116,14 @@ if (isset($_POST["update_profile"])) {
         $username;
 
 
-
     $message =
         "Profile updated successfully";
 }
 
 
-
-
-
-
 // =====================================
 // GET ADMIN DATA
 // =====================================
-
 
 $sql = "
 
@@ -164,12 +140,10 @@ $stmt =
     $conn->prepare($sql);
 
 
-
 $stmt->bind_param(
     "i",
     $userID
 );
-
 
 
 $stmt->execute();
@@ -179,15 +153,10 @@ $result =
     $stmt->get_result();
 
 
-
 $admin =
     $result->fetch_assoc();
 
-
-
 ?>
-
-
 
 
 
@@ -202,6 +171,11 @@ $admin =
     <meta charset="UTF-8">
 
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+
     <title>
         Admin Profile - PhishGuard AI
     </title>
@@ -211,51 +185,43 @@ $admin =
     <script src="https://cdn.tailwindcss.com"></script>
 
 
-    <link rel="stylesheet"
+    <link
+        rel="stylesheet"
         href="css/style.css">
-
 
 
 </head>
 
 
 
-
-
 <body
 
     class="
-bg-[var(--bg)]
-text-[var(--text)]
-transition
-duration-300
-">
-
-
-
-
-
+        bg-[var(--bg)]
+        text-[var(--text)]
+        transition
+        duration-300
+    ">
 
 
     <!-- ===============================
-SIDEBAR
-================================ -->
+         SIDEBAR
+    ================================ -->
 
 
     <aside
 
         class="
-fixed
-left-0
-top-0
-h-screen
-w-72
-bg-[var(--nav)]
-px-6
-py-8
-shadow-xl
-">
-
+            fixed
+            left-0
+            top-0
+            h-screen
+            w-72
+            bg-[var(--nav)]
+            px-6
+            py-8
+            shadow-xl
+        ">
 
 
         <a
@@ -263,11 +229,11 @@ shadow-xl
             href="admin_dashboard.php"
 
             class="
-text-2xl
-font-bold
-text-[var(--secondary)]
-no-underline
-">
+                text-2xl
+                font-bold
+                text-[var(--secondary)]
+                no-underline
+            ">
 
             🛡 PhishGuard AI
 
@@ -275,17 +241,12 @@ no-underline
 
 
 
-
-
-
-
         <nav
 
             class="
-mt-10
-space-y-3
-">
-
+                mt-10
+                space-y-3
+            ">
 
 
             <a
@@ -293,23 +254,19 @@ space-y-3
                 href="admin_dashboard.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-nav-link
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
 
                 📊 Dashboard
 
             </a>
-
-
-
-
 
 
 
@@ -318,23 +275,19 @@ no-underline
                 href="quiz_management.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-nav-link
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
 
                 📝 Quiz Management
 
             </a>
-
-
-
-
 
 
 
@@ -343,15 +296,15 @@ no-underline
                 href="show_user.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-nav-link
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
 
                 👥 Users
 
@@ -359,7 +312,24 @@ no-underline
 
 
 
+            <a
 
+                href="quiz_results.php"
+
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
+
+                🏆 Quiz Results
+
+            </a>
 
 
 
@@ -368,23 +338,19 @@ no-underline
                 href="add_admin.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-nav-link
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
 
                 👑 Add New Admin
 
             </a>
-
-
-
-
 
 
 
@@ -393,24 +359,19 @@ no-underline
                 href="detection_history.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-nav-link
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    nav-link
+                    no-underline
+                ">
 
                 🔍 Detection History
 
             </a>
-
-
-
-
-
 
 
 
@@ -419,139 +380,137 @@ no-underline
                 href="admin_profile.php"
 
                 class="
-flex
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-bg-[var(--primary)]
-text-white
-no-underline
-">
+                    flex
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    bg-[var(--primary)]
+                    text-white
+                    no-underline
+                ">
 
                 👤 Edit Profile
 
             </a>
 
 
-
-
-
-
-
         </nav>
-
-
-
-
 
 
 
         <div
 
             class="
-absolute
-bottom-8
-left-6
-right-6
-space-y-4
-">
+                absolute
+                bottom-8
+                left-6
+                right-6
+                space-y-4
+            ">
 
 
+            <!-- ===============================
+                 THEME BUTTON
+            ================================ -->
 
             <button
 
                 id="theme-toggle"
 
-                class="
-w-full
-flex
-justify-center
-items-center
-gap-3
-px-4
-py-3
-rounded-lg
-bg-blue-500/10
-border-none
-cursor-pointer
-">
+                type="button"
 
-                ☀ Light Mode
+                class="
+                    w-full
+                    flex
+                    justify-center
+                    items-center
+                    gap-3
+                    px-4
+                    py-3
+                    rounded-lg
+                    bg-blue-500/10
+                    border-none
+                    cursor-pointer
+                ">
+
+                <span id="theme-icon">
+                    ☀
+                </span>
+
+                <span id="theme-text">
+                    Light Mode
+                </span>
 
             </button>
 
 
 
-
-
+            <!-- LOGOUT -->
 
             <a
 
                 href="index.php"
 
                 class="
-block
-text-center
-bg-red-500/10
-text-red-400
-py-3
-rounded-lg
-no-underline
-">
+                    block
+                    text-center
+                    bg-red-500/10
+                    text-red-400
+                    py-3
+                    rounded-lg
+                    no-underline
+                ">
 
                 🚪 Logout
 
             </a>
 
 
-
-
-
         </div>
-
-
-
 
 
     </aside>
 
 
+
     <!-- ===============================
-MAIN CONTENT
-================================ -->
+         MAIN CONTENT
+    ================================ -->
 
     <main
 
         class="
-ml-72
-p-10
-w-[calc(100%-18rem)]
-">
+            ml-72
+            p-10
+            w-[calc(100%-18rem)]
+        ">
 
 
         <h1
 
             class="
-text-4xl
-font-bold
-text-[var(--secondary)]
-">
+                text-4xl
+                font-bold
+                text-[var(--secondary)]
+            ">
+
             👤 Edit Admin Profile
+
         </h1>
 
 
         <p
 
             class="
-mt-3
-text-[var(--muted)]
-">
+                mt-3
+                text-[var(--muted)]
+            ">
+
             Update your account information.
+
         </p>
-
-
 
 
 
@@ -560,14 +519,14 @@ text-[var(--muted)]
             <div
 
                 class="
-mt-6
-bg-green-500/10
-text-green-400
-p-4
-rounded-lg
-">
+                    mt-6
+                    bg-green-500/10
+                    text-green-400
+                    p-4
+                    rounded-lg
+                ">
 
-                <?= $message ?>
+                <?= htmlspecialchars($message) ?>
 
             </div>
 
@@ -575,21 +534,17 @@ rounded-lg
 
 
 
-
-
-
         <div
 
             class="
-mt-10
-w-full
-max-w-6xl
-bg-[var(--card)]
-p-10
-rounded-xl
-shadow
-">
-
+                mt-10
+                w-full
+                max-w-6xl
+                bg-[var(--card)]
+                p-10
+                rounded-xl
+                shadow
+            ">
 
 
             <form
@@ -597,14 +552,17 @@ shadow
                 method="POST"
 
                 class="
-space-y-6
-">
+                    space-y-6
+                ">
 
 
+                <!-- USERNAME -->
 
                 <div>
 
-                    <label class="font-semibold">
+                    <label
+                        for="username"
+                        class="font-semibold">
 
                         Username
 
@@ -615,19 +573,22 @@ space-y-6
 
                         type="text"
 
+                        id="username"
+
                         name="username"
 
                         value="<?= htmlspecialchars($admin["Username"]); ?>"
 
                         class="
-w-full
-mt-2
-px-5
-py-3
-rounded-lg
-bg-[var(--bg)]
-outline-none
-"
+                            w-full
+                            mt-2
+                            px-5
+                            py-3
+                            rounded-lg
+                            bg-[var(--bg)]
+                            text-[var(--text)]
+                            outline-none
+                        "
 
                         required>
 
@@ -635,13 +596,13 @@ outline-none
 
 
 
-
-
-
+                <!-- EMAIL -->
 
                 <div>
 
-                    <label class="font-semibold">
+                    <label
+                        for="email"
+                        class="font-semibold">
 
                         Email
 
@@ -652,19 +613,22 @@ outline-none
 
                         type="email"
 
+                        id="email"
+
                         name="email"
 
                         value="<?= htmlspecialchars($admin["Email"]); ?>"
 
                         class="
-w-full
-mt-2
-px-5
-py-3
-rounded-lg
-bg-[var(--bg)]
-outline-none
-"
+                            w-full
+                            mt-2
+                            px-5
+                            py-3
+                            rounded-lg
+                            bg-[var(--bg)]
+                            text-[var(--text)]
+                            outline-none
+                        "
 
                         required>
 
@@ -672,25 +636,34 @@ outline-none
 
 
 
-
-
-
-
+                <!-- PASSWORD -->
 
                 <div>
 
-                    <label class="font-semibold">
+                    <label
+                        for="password"
+                        class="font-semibold">
 
                         New Password
 
-                        <span class="text-gray-400 text-sm">
+                        <span
+                            class="
+                                text-gray-400
+                                text-sm
+                            ">
+
                             (Optional)
+
                         </span>
 
                     </label>
 
 
-                    <div class="flex mt-2">
+                    <div
+                        class="
+                            relative
+                            mt-2
+                        ">
 
 
                         <input
@@ -704,28 +677,35 @@ outline-none
                             placeholder="Enter new password"
 
                             class="
-w-full
-px-5
-py-3
-rounded-l-lg
-bg-[var(--bg)]
-outline-none
-">
-
+                                w-full
+                                px-5
+                                py-3
+                                pr-14
+                                rounded-lg
+                                bg-[var(--bg)]
+                                text-[var(--text)]
+                                outline-none
+                            ">
 
 
                         <button
 
                             type="button"
 
-                            onclick="togglePassword()"
+                            id="password-toggle"
 
                             class="
-px-6
-bg-blue-600
-text-white
-rounded-r-lg
-">
+                                absolute
+                                right-4
+                                top-1/2
+                                -translate-y-1/2
+                                text-xl
+                                cursor-pointer
+                                bg-transparent
+                                border-none
+                            "
+
+                            aria-label="Show password">
 
                             👁
 
@@ -739,26 +719,31 @@ rounded-r-lg
 
 
 
+                <!-- BUTTONS -->
 
-
-
-
-                <div class="flex gap-4 pt-5">
+                <div
+                    class="
+                        flex
+                        gap-4
+                        pt-5
+                    ">
 
 
                     <button
 
+                        type="submit"
+
                         name="update_profile"
 
                         class="
-px-8
-py-3
-bg-blue-600
-text-white
-rounded-lg
-hover:bg-blue-700
-transition
-">
+                            px-8
+                            py-3
+                            bg-blue-600
+                            text-white
+                            rounded-lg
+                            hover:bg-blue-700
+                            transition
+                        ">
 
                         Save Changes
 
@@ -771,13 +756,13 @@ transition
                         href="admin_dashboard.php"
 
                         class="
-px-8
-py-3
-bg-gray-600
-text-white
-rounded-lg
-no-underline
-">
+                            px-8
+                            py-3
+                            bg-gray-600
+                            text-white
+                            rounded-lg
+                            no-underline
+                        ">
 
                         Back
 
@@ -785,7 +770,6 @@ no-underline
 
 
                 </div>
-
 
 
             </form>
@@ -798,51 +782,212 @@ no-underline
 
 
 
-
-
-
-
-
-
-    <script>
-        function togglePassword() {
-
-
-            let password =
-                document.getElementById("password");
-
-
-
-            if (password.type === "password") {
-
-
-                password.type = "text";
-
-
-            } else {
-
-
-                password.type = "password";
-
-
-            }
-
-
-        }
-    </script>
-
-
-
-
-
-
+    <!-- =====================================
+         EXISTING PROJECT JAVASCRIPT
+    ====================================== -->
 
     <script src="js/script.js"></script>
 
 
 
+    <!-- =====================================
+         ADMIN PROFILE JAVASCRIPT
+    ====================================== -->
+
+    <script>
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+
+                // =================================
+                // DARK / LIGHT MODE
+                // =================================
+
+                const themeToggle =
+                    document.getElementById(
+                        "theme-toggle"
+                    );
+
+
+                const themeIcon =
+                    document.getElementById(
+                        "theme-icon"
+                    );
+
+
+                const themeText =
+                    document.getElementById(
+                        "theme-text"
+                    );
+
+
+
+                // =================================
+                // APPLY SAVED THEME
+                // =================================
+
+                const savedTheme =
+                    localStorage.getItem(
+                        "theme"
+                    );
+
+
+                if (
+                    savedTheme === "dark"
+                ) {
+
+                    document.body.classList.add(
+                        "dark"
+                    );
+
+                    themeIcon.textContent =
+                        "🌙";
+
+                    themeText.textContent =
+                        "Dark Mode";
+
+                } else {
+
+                    document.body.classList.remove(
+                        "dark"
+                    );
+
+                    themeIcon.textContent =
+                        "☀";
+
+                    themeText.textContent =
+                        "Light Mode";
+
+                }
+
+
+
+                // =================================
+                // THEME BUTTON
+                // =================================
+
+                if (themeToggle) {
+
+                    themeToggle.addEventListener(
+                        "click",
+                        function() {
+
+
+                            document.body.classList.toggle(
+                                "dark"
+                            );
+
+
+                            const isDark =
+                                document.body.classList.contains(
+                                    "dark"
+                                );
+
+
+                            if (isDark) {
+
+                                localStorage.setItem(
+                                    "theme",
+                                    "dark"
+                                );
+
+                                themeIcon.textContent =
+                                    "🌙";
+
+                                themeText.textContent =
+                                    "Dark Mode";
+
+                            } else {
+
+                                localStorage.setItem(
+                                    "theme",
+                                    "light"
+                                );
+
+                                themeIcon.textContent =
+                                    "☀";
+
+                                themeText.textContent =
+                                    "Light Mode";
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+
+                // =================================
+                // PASSWORD SHOW / HIDE
+                // =================================
+
+                const password =
+                    document.getElementById(
+                        "password"
+                    );
+
+
+                const passwordToggle =
+                    document.getElementById(
+                        "password-toggle"
+                    );
+
+
+                if (
+                    password &&
+                    passwordToggle
+                ) {
+
+                    passwordToggle.addEventListener(
+                        "click",
+                        function() {
+
+
+                            if (
+                                password.type ===
+                                "password"
+                            ) {
+
+                                password.type =
+                                    "text";
+
+                                passwordToggle.textContent =
+                                    "🙈";
+
+                                passwordToggle.setAttribute(
+                                    "aria-label",
+                                    "Hide password"
+                                );
+
+                            } else {
+
+                                password.type =
+                                    "password";
+
+                                passwordToggle.textContent =
+                                    "👁";
+
+                                passwordToggle.setAttribute(
+                                    "aria-label",
+                                    "Show password"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+
+        );
+    </script>
+
 
 </body>
-
 
 </html>

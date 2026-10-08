@@ -267,6 +267,26 @@ no-underline
             </a>
 
 
+            <a
+
+                href="quiz_results.php"
+
+                class="
+flex
+items-center
+gap-3
+px-4
+py-3
+rounded-lg
+nav-link
+no-underline
+">
+
+                🏆 Quiz Results
+
+            </a>
+
+
 
 
 

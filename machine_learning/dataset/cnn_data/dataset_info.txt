@@ -1,0 +1,14 @@
+PHISHGUARD AI - CNN DATASET INFORMATION
+========================================
+
+Original rows: 235795
+Prepared rows: 235370
+Training rows: 164759
+Validation rows: 35305
+Testing rows: 35306
+
+Columns used:
+URL
+label
+
+Original labels were preserved.

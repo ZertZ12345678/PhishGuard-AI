@@ -87,7 +87,13 @@ no-underline
             </a>
 
 
+            <a
+                href="login.php"
+                class="nav-link">
 
+                Detection
+
+            </a>
 
 
             <a

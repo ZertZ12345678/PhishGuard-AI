@@ -22,7 +22,7 @@ include "../backend/php/db_connection.php";
 
 
 // =====================================
-// SEARCH
+// SEARCH BY USERNAME
 // =====================================
 
 $search = "";
@@ -30,16 +30,14 @@ $search = "";
 
 if (isset($_GET["search"])) {
 
-    $search = $_GET["search"];
+    $search = trim($_GET["search"]);
 }
 
 
 
-
 // =====================================
-// GET DETECTION HISTORY
+// GET QUIZ RESULTS
 // =====================================
-
 
 if ($search != "") {
 
@@ -48,59 +46,42 @@ if ($search != "") {
 
     SELECT
 
-    url_history.*,
+    quiz_results.*,
     users.Username
 
 
-    FROM url_history
+    FROM quiz_results
 
 
     LEFT JOIN users
 
-    ON url_history.UserID = users.UserID
+    ON quiz_results.UserID = users.UserID
 
 
-
-    WHERE
-
-    url_history.URL LIKE ?
-
-    OR url_history.PredictionResult LIKE ?
-
-    OR users.Username LIKE ?
+    WHERE users.Username LIKE ?
 
 
-
-    ORDER BY url_history.HistoryID DESC
+    ORDER BY quiz_results.ResultID DESC
 
     ";
-
 
 
     $stmt = $conn->prepare($sql);
 
 
-
     $keyword = "%" . $search . "%";
-
 
 
     $stmt->bind_param(
 
-        "sss",
-
-        $keyword,
-
-        $keyword,
+        "s",
 
         $keyword
 
     );
 
 
-
     $stmt->execute();
-
 
 
     $result = $stmt->get_result();
@@ -111,23 +92,21 @@ if ($search != "") {
 
     SELECT
 
-    url_history.*,
+    quiz_results.*,
     users.Username
 
 
-    FROM url_history
+    FROM quiz_results
 
 
     LEFT JOIN users
 
-    ON url_history.UserID = users.UserID
+    ON quiz_results.UserID = users.UserID
 
 
-
-    ORDER BY url_history.HistoryID DESC
+    ORDER BY quiz_results.ResultID DESC
 
     ";
-
 
 
     $result = $conn->query($sql);
@@ -150,7 +129,7 @@ if ($search != "") {
 
 
     <title>
-        Detection History - PhishGuard AI
+        Quiz Results - PhishGuard AI
     </title>
 
 
@@ -179,10 +158,9 @@ duration-300
 
 
 
-
     <!-- ===============================
-SIDEBAR
-================================ -->
+    SIDEBAR
+    ================================ -->
 
 
     <aside
@@ -219,15 +197,12 @@ no-underline
 
 
 
-
-
         <nav
 
             class="
 mt-10
 space-y-3
 ">
-
 
 
             <a
@@ -301,7 +276,8 @@ gap-3
 px-4
 py-3
 rounded-lg
-nav-link
+bg-[var(--primary)]
+text-white
 no-underline
 ">
 
@@ -343,14 +319,14 @@ block
 px-4
 py-3
 rounded-lg
-bg-[var(--primary)]
-text-white
+nav-link
 no-underline
 ">
 
                 🔍 Detection History
 
             </a>
+
 
             <a
 
@@ -375,6 +351,7 @@ no-underline
 
 
         </nav>
+
 
 
 
@@ -453,8 +430,8 @@ no-underline
 
 
     <!-- ===============================
-MAIN CONTENT
-================================ -->
+    MAIN CONTENT
+    ================================ -->
 
 
     <main
@@ -465,8 +442,6 @@ p-10
 ">
 
 
-
-
         <h1
 
             class="
@@ -475,7 +450,7 @@ font-bold
 text-[var(--secondary)]
 ">
 
-            🔍 Detection History
+            🏆 Quiz Results
 
         </h1>
 
@@ -489,7 +464,7 @@ mt-3
 text-[var(--muted)]
 ">
 
-            View all URL detection activities.
+            View quiz results and performance of registered users.
 
         </p>
 
@@ -499,7 +474,9 @@ text-[var(--muted)]
 
 
 
-        <!-- SEARCH -->
+        <!-- ===============================
+        SEARCH
+        ================================ -->
 
 
         <form
@@ -519,9 +496,15 @@ gap-3
 
                 name="search"
 
-                value="<?php echo htmlspecialchars($search); ?>"
+                value="<?php
 
-                placeholder="Search username, URL or result"
+                        echo htmlspecialchars(
+                            $search
+                        );
+
+                        ?>"
+
+                placeholder="Search username"
 
                 class="
 w-96
@@ -533,8 +516,9 @@ outline-none
 ">
 
 
-
             <button
+
+                type="submit"
 
                 class="
 px-6
@@ -550,6 +534,35 @@ rounded-lg
 
 
 
+            <?php
+
+            if ($search != ""):
+
+            ?>
+
+                <a
+
+                    href="quiz_results.php"
+
+                    class="
+px-6
+py-3
+bg-gray-500/20
+text-[var(--text)]
+rounded-lg
+no-underline
+flex
+items-center
+">
+
+                    Clear
+
+                </a>
+
+            <?php endif; ?>
+
+
+
         </form>
 
 
@@ -560,7 +573,9 @@ rounded-lg
 
 
 
-        <!-- TABLE -->
+        <!-- ===============================
+        TABLE
+        ================================ -->
 
 
         <div
@@ -570,10 +585,8 @@ mt-10
 bg-[var(--card)]
 rounded-xl
 shadow
-overflow-hidden
+overflow-x-auto
 ">
-
-
 
 
             <table
@@ -582,8 +595,6 @@ overflow-hidden
 w-full
 text-left
 ">
-
-
 
 
                 <thead
@@ -607,22 +618,22 @@ bg-black/10
 
 
                         <th class="p-5">
-                            URL
+                            Score
                         </th>
 
 
                         <th class="p-5">
-                            Prediction
+                            Total Questions
                         </th>
 
 
                         <th class="p-5">
-                            Confidence
+                            Percentage
                         </th>
 
 
                         <th class="p-5">
-                            Checked Date
+                            Attempt Date
                         </th>
 
 
@@ -642,150 +653,182 @@ bg-black/10
                 <tbody>
 
 
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php
+
+                    if (
+                        $result &&
+                        $result->num_rows > 0
+                    ):
+
+                        while (
+                            $row =
+                            $result->fetch_assoc()
+                        ):
+
+                    ?>
 
 
-                        <tr
+                            <tr
 
-                            class="
+                                class="
 border-t
 border-gray-500/20
 ">
 
 
+                                <!-- RESULT ID -->
 
-                            <td class="p-5">
+                                <td class="p-5">
 
-                                <?php echo $row["HistoryID"]; ?>
+                                    <?php
 
-                            </td>
+                                    echo $row["ResultID"];
+
+                                    ?>
+
+                                </td>
 
 
 
 
 
+                                <!-- USERNAME -->
+
+                                <td
+                                    class="
+p-5
+font-semibold
+">
+
+                                    <?php
+
+                                    echo htmlspecialchars(
+                                        $row["Username"] ?? "Unknown"
+                                    );
+
+                                    ?>
+
+                                </td>
 
 
-                            <td class="p-5 font-semibold">
+
+
+
+                                <!-- SCORE -->
+
+                                <td class="p-5">
+
+                                    <?php
+
+                                    echo $row["Score"];
+
+                                    ?>
+
+                                </td>
+
+
+
+
+
+                                <!-- TOTAL QUESTIONS -->
+
+                                <td class="p-5">
+
+                                    <?php
+
+                                    echo $row["TotalQuestions"];
+
+                                    ?>
+
+                                </td>
+
+
+
+
+
+                                <!-- PERCENTAGE -->
+
+                                <td class="p-5">
+
+                                    <?php
+
+                                    echo number_format(
+                                        (float)$row["Percentage"],
+                                        2
+                                    );
+
+                                    ?>%
+
+                                </td>
+
+
+
+
+
+                                <!-- ATTEMPT DATE -->
+
+                                <td class="p-5">
+
+                                    <?php
+
+                                    echo $row["AttemptDate"];
+
+                                    ?>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        <?php
+
+                        endwhile;
+
+
+                    else:
+
+                        ?>
+
+
+                        <tr>
+
+                            <td
+
+                                colspan="6"
+
+                                class="
+p-8
+text-center
+text-[var(--muted)]
+">
 
                                 <?php
 
-                                echo $row["Username"] ?? "Unknown";
+                                if ($search != "") {
 
-                                ?>
+                                    echo "No quiz results found for username: ";
 
-                            </td>
-
-
-
-
-
-
-
-                            <td class="p-5 max-w-md truncate">
-
-
-                                <?php
-
-                                echo htmlspecialchars(
-                                    $row["URL"]
-                                );
-
-                                ?>
-
-
-                            </td>
-
-
-
-
-
-
-
-                            <td class="p-5">
-
-
-                                <?php
-
-
-                                if (
-                                    $row["PredictionResult"] == "Safe"
-                                ) {
-
-
-                                    echo "
-
-<span class='text-green-400 font-bold'>
-
-✓ Safe
-
-</span>
-
-";
+                                    echo htmlspecialchars(
+                                        $search
+                                    );
                                 } else {
 
-
-                                    echo "
-
-<span class='text-red-400 font-bold'>
-
-⚠ Phishing
-
-</span>
-
-";
+                                    echo "No quiz results available.";
                                 }
 
-
-
-                                ?>
-
-
-                            </td>
-
-
-
-
-
-
-
-                            <td class="p-5">
-
-                                <?php
-
-                                echo $row["ConfidenceScore"];
-
-                                ?>%
-
-                            </td>
-
-
-
-
-
-
-
-                            <td class="p-5">
-
-                                <?php
-
-                                echo $row["CheckedDate"];
-
                                 ?>
 
                             </td>
-
-
-
-
-
 
                         </tr>
 
 
+                    <?php
 
-                    <?php endwhile; ?>
+                    endif;
 
+                    ?>
 
 
                 </tbody>
@@ -793,12 +836,7 @@ border-gray-500/20
 
 
 
-
-
             </table>
-
-
-
 
 
         </div>
@@ -806,9 +844,8 @@ border-gray-500/20
 
 
 
-
-
     </main>
+
 
 
 
