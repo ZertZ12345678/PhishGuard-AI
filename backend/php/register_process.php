@@ -37,7 +37,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
 
-        die("Username or email already exists.");
+        echo "<script>
+        alert('Username or email already exists. Please use different details.');
+        window.history.back();
+    </script>";
+
+        exit();
     }
 
 
