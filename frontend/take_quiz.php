@@ -2,110 +2,94 @@
 
 session_start();
 
-
 // =====================================================
+
 // DATABASE CONNECTION
+
 // =====================================================
 
 require_once __DIR__ . "/../backend/php/db_connection.php";
-
 
 if (!isset($conn) || !$conn) {
 
     die("Database connection failed.");
 }
 
-
-
-
-
 // =====================================================
+
 // LOGIN CHECK
+
 // =====================================================
 
 if (
+
     !isset($_SESSION["UserID"]) ||
+
     !isset($_SESSION["Role"]) ||
+
     $_SESSION["Role"] !== "User"
+
 ) {
 
     header("Location: login.php");
+
     exit();
 }
 
-
-
 $userID = $_SESSION["UserID"];
 
-
-
-
-
-
-
-
 // =====================================================
+
 // RETAKE QUIZ
-// CLEAR OLD RESULT
-// =====================================================
 
+// CLEAR OLD RESULT
+
+// =====================================================
 
 if (isset($_GET["retry"])) {
-
 
     unset($_SESSION["quiz_result"]);
 
     unset($_SESSION["quiz_review"]);
 }
 
-
-
-
-
-
-
-
-
 // =====================================================
+
 // FUNCTION TO SHOW FULL ANSWER TEXT
-// ONLY ONE FUNCTION
-// =====================================================
 
+// ONLY ONE FUNCTION
+
+// =====================================================
 
 function showAnswerText($answer, $question)
+
 {
 
-
     switch ($answer) {
-
 
         case "A":
 
             return "A. " .
+
                 $question["OptionA"];
-
-
 
         case "B":
 
             return "B. " .
+
                 $question["OptionB"];
-
-
 
         case "C":
 
             return "C. " .
+
                 $question["OptionC"];
-
-
 
         case "D":
 
             return "D. " .
+
                 $question["OptionD"];
-
-
 
         default:
 
@@ -113,29 +97,28 @@ function showAnswerText($answer, $question)
     }
 }
 
-
-
-
-
-
-
-
-
 // =====================================================
+
 // LOAD QUESTIONS
-// =====================================================
 
+// =====================================================
 
 $sql = "
 
 SELECT
 
 QuestionID,
+
 QuestionText,
+
 OptionA,
+
 OptionB,
+
 OptionC,
+
 OptionD,
+
 CorrectAnswer
 
 FROM quiz_questions
@@ -144,137 +127,80 @@ ORDER BY QuestionID ASC
 
 ";
 
-
-
-
 $result = $conn->query($sql);
-
-
 
 if (!$result) {
 
-
     die("Quiz loading error: "
+
         .
+
         $conn->error);
 }
 
-
-
-
-
 $questions = [];
 
-
-
-
 while ($row = $result->fetch_assoc()) {
-
 
     $questions[] = $row;
 }
 
-
-
-
 $totalQuestions = count($questions);
 
-
-
-
-
-
-
-
-
 // =====================================================
+
 // SUBMIT QUIZ
-// =====================================================
 
+// =====================================================
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-
-
     $score = 0;
-
 
     $userAnswers = [];
 
-
-
-
-
-
     foreach ($questions as $question) {
 
-
-
         $questionID =
+
             $question["QuestionID"];
 
-
-
-
-
         $answer =
+
             $_POST["answer"][$questionID]
+
             ?? "";
 
-
-
-
-
         $userAnswers[$questionID] =
+
             $answer;
 
-
-
-
-
-
-
         if (
-            $answer ===
-            $question["CorrectAnswer"]
-        ) {
 
+            $answer ===
+
+            $question["CorrectAnswer"]
+
+        ) {
 
             $score++;
         }
     }
 
-
-
-
-
-
-
-
-
     $percentage = 0;
-
-
 
     if ($totalQuestions > 0) {
 
-
         $percentage =
+
             ($score / $totalQuestions) * 100;
     }
 
-
-
-
-
-
-
-
-
     // =================================================
+
     // SAVE RESULT DATABASE
-    // =================================================
 
+    // =================================================
 
     $insert = "
 
@@ -283,9 +209,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     (
 
     UserID,
+
     Score,
+
     TotalQuestions,
+
     Percentage,
+
     AttemptDate
 
     )
@@ -296,17 +226,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     ";
 
-
-
-
     $stmt =
+
         $conn->prepare($insert);
 
-
-
-
     if ($stmt) {
-
 
         $stmt->bind_param(
 
@@ -322,26 +246,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         );
 
-
-
         $stmt->execute();
-
 
         $stmt->close();
     }
 
-
-
-
-
-
-
-
-
     // =================================================
+
     // STORE RECENT SCORE
-    // =================================================
 
+    // =================================================
 
     $_SESSION["quiz_result"] = [
 
@@ -350,72 +264,54 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         "total" => $totalQuestions,
 
         "percentage" =>
+
         number_format(
+
             $percentage,
+
             2
+
         )
 
     ];
 
-
-
-
-
-
-
-
-
     // =================================================
+
     // STORE USER ANSWERS
-    // =================================================
 
+    // =================================================
 
     $_SESSION["quiz_review"] =
+
         $userAnswers;
 }
 
-
-
-
-
-
-
-
-
 // =====================================================
+
 // GET RECENT RESULT
-// =====================================================
 
+// =====================================================
 
 $recentResult = null;
 
-
-
 if (isset($_SESSION["quiz_result"])) {
 
-
     $recentResult =
+
         $_SESSION["quiz_result"];
 }
 
-
-
-
-
-
-
-
-
 // =====================================================
+
 // GET REVIEW ANSWERS
-// =====================================================
 
+// =====================================================
 
 $reviewAnswers =
+
     $_SESSION["quiz_review"]
+
     ?? [];
-
-
 
 ?>
 
@@ -423,155 +319,268 @@ $reviewAnswers =
 
 <html lang="en">
 
-
 <head>
 
     <meta charset="UTF-8">
 
-
     <meta
+
         name="viewport"
+
         content="width=device-width, initial-scale=1.0">
 
-
     <title>
-        Cybersecurity Quiz - PhishGuard AI
-    </title>
 
+        Cybersecurity Quiz - PhishGuard AI
+
+    </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-
     <link
+
         rel="stylesheet"
+
         href="css/style.css" />
 
+    <style>
+        /* Responsive navigation and quiz layout; desktop styling unchanged. */
+        .quiz-menu-button {
+            display: none;
+        }
 
+        @media (max-width: 1023px) {
+            .quiz-header {
+                position: relative;
+                padding: 1rem 1.25rem !important;
+                gap: .75rem;
+            }
+
+            .quiz-header>a {
+                font-size: 1.25rem;
+                white-space: nowrap;
+            }
+
+            .quiz-menu-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                background: transparent;
+                border: 1px solid var(--muted);
+                border-radius: 8px;
+                color: var(--text);
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+
+            .quiz-nav {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 80;
+                padding: 1rem 1.5rem;
+                background: var(--nav);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, .2);
+                flex-direction: column;
+                align-items: flex-start !important;
+                text-align: left !important;
+                gap: 1rem;
+            }
+
+            .quiz-nav.is-open {
+                display: flex !important;
+            }
+
+            .quiz-nav a {
+                display: block;
+                align-self: flex-start !important;
+                text-align: left !important;
+                padding: .25rem 0;
+            }
+
+            .quiz-nav #theme-toggle {
+                align-self: flex-start;
+            }
+
+            .quiz-section,
+            .quiz-review,
+            .quiz-retry {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+
+            .quiz-card {
+                padding: 1.25rem !important;
+                overflow-wrap: anywhere;
+            }
+
+            .quiz-title {
+                font-size: clamp(1.5rem, 5vw, 2.25rem);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .quiz-header>a {
+                font-size: 1.05rem;
+            }
+
+            .quiz-actions {
+                flex-wrap: wrap;
+            }
+
+            .quiz-actions>* {
+                flex: 1 1 130px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
-
-
-
-
 <body
+
     class="
+
 bg-[var(--bg)]
+
 text-[var(--text)]
+
 transition
+
 duration-300
+
 ">
-
-
-
-
-
 
     <!-- =====================================================
-     USER NAVBAR
-====================================================== -->
 
+     USER NAVBAR
+
+\====================================================== -->
 
     <header
-        class="
-flex
-justify-between
-items-center
-px-10
-py-5
-bg-[var(--nav)]
-">
 
+        class="quiz-header 
+
+flex
+
+justify-between
+
+items-center
+
+px-10
+
+py-5
+
+bg-[var(--nav)]
+
+">
 
         <!-- LOGO -->
 
-
         <a
+
             href="user_home.php"
+
             class="
+
 text-2xl
+
 font-bold
+
 text-[var(--secondary)]
+
 no-underline
+
 ">
 
             🛡 PhishGuard AI
 
         </a>
 
+        <button id="quiz-menu-toggle" class="quiz-menu-button" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="quiz-primary-nav">☰</button>
+        <nav id="quiz-primary-nav"
 
+            class="quiz-nav 
 
-
-
-
-
-        <nav
-            class="
 flex
+
 items-center
+
 gap-6
+
 ">
 
-
             <a
+
                 href="user_home.php"
+
                 class="nav-link no-underline">
+
                 Home
+
             </a>
 
-
-
             <a
+
                 href="detection.php"
+
                 class="nav-link no-underline">
+
                 Detection
+
             </a>
 
-
-
-
             <a
+
                 href="awareness.php?source=user"
+
                 class="nav-link no-underline">
+
                 Awareness
+
             </a>
 
-
-
-
-
             <a
+
                 href="take_quiz.php"
+
                 class="
+
 text-blue-400
+
 font-semibold
+
 no-underline
+
 ">
+
                 Quiz
+
             </a>
 
-
-
-
-
             <a
+
                 href="user_dashboard.php"
+
                 class="nav-link no-underline">
+
                 Dashboard
+
             </a>
-
-
-
-
 
             <a
+
                 href="index.php"
+
                 class="nav-link no-underline">
+
                 Logout
+
             </a>
-
-
-
-
 
             <button
 
@@ -580,120 +589,124 @@ no-underline
                 type="button"
 
                 class="
+
 text-2xl
+
 cursor-pointer
+
 bg-transparent
+
 border-none
+
 ">
 
                 ☀
 
             </button>
 
-
-
         </nav>
-
-
 
     </header>
 
-
-
-
-
-
-
-
-
     <!-- =====================================================
-     QUIZ SECTION
-====================================================== -->
 
+     QUIZ SECTION
+
+\====================================================== -->
 
     <section
-        class="
+
+        class="quiz-section 
+
 max-w-5xl
+
 mx-auto
+
 px-8
+
 py-16
+
 ">
 
-
-
-
-
         <h1
+
             class="
+
 text-4xl
+
 font-bold
+
 text-center
+
 text-[var(--secondary)]
+
 mb-4
+
 ">
 
             📝 Cybersecurity Awareness Quiz
 
         </h1>
 
-
-
-
-
         <p
+
             class="
+
 text-center
+
 text-[var(--muted)]
+
 mb-10
+
 ">
 
             Test your knowledge about phishing and cybersecurity.
 
         </p>
 
-
-
-
-
-
-
-
-
-
         <!-- =====================================================
-     RECENT SCORE
-====================================================== -->
 
+     RECENT SCORE
+
+\====================================================== -->
 
         <?php if ($recentResult): ?>
 
-
             <div
+
                 class="
+
 bg-green-500/10
+
 border
+
 border-green-500/20
+
 rounded-xl
+
 p-8
+
 mb-10
+
 text-center
+
 ">
 
-
                 <h2
+
                     class="
+
 text-2xl
+
 font-bold
+
 text-green-400
+
 ">
 
                     🎉 Quiz Completed!
 
                 </h2>
-
-
-
-
 
                 <p class="mt-4 text-lg">
 
@@ -711,10 +724,6 @@ text-green-400
 
                 </p>
 
-
-
-
-
                 <p class="text-lg">
 
                     Percentage:
@@ -727,116 +736,99 @@ text-green-400
 
                 </p>
 
-
-
-
-
                 <p
+
                     class="
+
 mt-3
+
 text-green-400
+
 ">
 
                     ✅ Result saved successfully
 
                 </p>
 
-
-
             </div>
-
-
 
         <?php endif; ?>
 
-
-
-
-
-
-
-
-
         <!-- =====================================================
-     QUIZ FORM
-     ONLY SHOW BEFORE SUBMIT
-====================================================== -->
 
+     QUIZ FORM
+
+     ONLY SHOW BEFORE SUBMIT
+
+\====================================================== -->
 
         <?php if (!$recentResult): ?>
 
-
-
             <form
+
                 method="POST"
+
                 action="">
-
-
-
-
-
-
 
                 <?php foreach ($questions as $index => $question): ?>
 
-
-
-
                     <div
-                        class="
+
+                        class="quiz-card 
+
 bg-[var(--card)]
+
 rounded-xl
+
 shadow
+
 p-8
+
 mb-8
+
 ">
-
-
-
-
-
-
 
                         <h2
-                            class="
-text-xl
-font-bold
-mb-6
-text-[var(--secondary)]
-">
 
+                            class="
+
+text-xl
+
+font-bold
+
+mb-6
+
+text-[var(--secondary)]
+
+">
 
                             <?php echo $index + 1; ?>.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["QuestionText"]
+
                             );
 
                             ?>
 
-
                         </h2>
-
-
-
-
-
-
-
-
 
                         <!-- OPTION A -->
 
-
                         <label
-                            class="
-block
-mb-4
-cursor-pointer
-">
 
+                            class="
+
+block
+
+mb-4
+
+cursor-pointer
+
+">
 
                             <input
 
@@ -848,39 +840,33 @@ cursor-pointer
 
                                 class="mr-3">
 
-
                             A.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["OptionA"]
+
                             );
 
                             ?>
 
-
-
                         </label>
-
-
-
-
-
-
-
-
 
                         <!-- OPTION B -->
 
-
                         <label
-                            class="
-block
-mb-4
-cursor-pointer
-">
 
+                            class="
+
+block
+
+mb-4
+
+cursor-pointer
+
+">
 
                             <input
 
@@ -892,39 +878,33 @@ cursor-pointer
 
                                 class="mr-3">
 
-
                             B.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["OptionB"]
+
                             );
 
                             ?>
 
-
-
                         </label>
-
-
-
-
-
-
-
-
 
                         <!-- OPTION C -->
 
-
                         <label
-                            class="
-block
-mb-4
-cursor-pointer
-">
 
+                            class="
+
+block
+
+mb-4
+
+cursor-pointer
+
+">
 
                             <input
 
@@ -936,39 +916,33 @@ cursor-pointer
 
                                 class="mr-3">
 
-
                             C.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["OptionC"]
+
                             );
 
                             ?>
 
-
-
                         </label>
-
-
-
-
-
-
-
-
 
                         <!-- OPTION D -->
 
-
                         <label
-                            class="
-block
-mb-4
-cursor-pointer
-">
 
+                            class="
+
+block
+
+mb-4
+
+cursor-pointer
+
+">
 
                             <input
 
@@ -980,634 +954,610 @@ cursor-pointer
 
                                 class="mr-3">
 
-
                             D.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["OptionD"]
+
                             );
 
                             ?>
 
-
-
                         </label>
-
-
-
-
 
                     </div>
 
-
-
-
-
-
                 <?php endforeach; ?>
-
-
-
-
-
-
-
-
 
                 <!-- BUTTONS -->
 
-
                 <div
+
                     class="
+
 flex
+
 justify-center
+
 gap-4
+
 mt-10
+
 ">
-
-
-
 
                     <button
 
                         type="submit"
 
                         class="
+
 px-8
+
 py-3
+
 bg-blue-600
+
 text-white
+
 rounded-lg
+
 font-semibold
+
 hover:bg-blue-700
+
 transition
+
 ">
 
                         Submit Quiz
 
                     </button>
 
-
-
-
-
-
-
                     <button
 
                         type="reset"
 
                         class="
+
 px-8
+
 py-3
+
 bg-gray-500/20
+
 rounded-lg
+
 font-semibold
+
 hover:bg-gray-500/30
+
 transition
+
 ">
 
                         Clear
 
                     </button>
 
-
-
-
-
                 </div>
-
-
-
-
 
             </form>
 
-
-
         <?php endif; ?>
-
-
-
-
-
 
     </section>
 
     <!-- =====================================================
-     REVIEW ANSWERS
-====================================================== -->
 
+     REVIEW ANSWERS
+
+\====================================================== -->
 
     <?php if ($recentResult): ?>
 
-
         <section
-            class="
-max-w-5xl
-mx-auto
-px-8
-pb-10
-">
 
+            class="
+
+max-w-5xl
+
+mx-auto
+
+px-8
+
+pb-10
+
+">
 
             <div
+
                 class="
+
 bg-[var(--card)]
+
 rounded-xl
+
 shadow
+
 p-8
+
 ">
 
-
-
                 <h2
+
                     class="
+
 text-2xl
+
 font-bold
+
 text-[var(--secondary)]
+
 mb-8
+
 ">
 
                     📘 Review Your Answers
 
                 </h2>
 
-
-
-
-
-
-
                 <?php foreach ($questions as $index => $question): ?>
-
-
 
                     <?php
 
-
                     $userAnswer =
+
                         $reviewAnswers[$question["QuestionID"]]
+
                         ?? "";
 
-
-
                     $correctAnswer =
+
                         $question["CorrectAnswer"];
 
-
-
-
-
                     $userAnswerText =
+
                         showAnswerText(
+
                             $userAnswer,
+
                             $question
+
                         );
-
-
 
                     $correctAnswerText =
+
                         showAnswerText(
+
                             $correctAnswer,
+
                             $question
+
                         );
-
-
-
-
 
                     $isCorrect =
+
                         (
+
                             $userAnswer === $correctAnswer
+
                         );
-
-
 
                     ?>
 
-
-
-
-
-
-
-
                     <div
+
                         class="
+
 mb-8
+
 p-6
+
 rounded-xl
+
 bg-black/10
+
 border
+
 border-gray-500/20
+
 ">
-
-
-
-
-
-
 
                         <h3
-                            class="
-text-lg
-font-bold
-mb-6
-">
 
+                            class="
+
+text-lg
+
+font-bold
+
+mb-6
+
+">
 
                             <?php echo $index + 1; ?>.
 
                             <?php
 
                             echo htmlspecialchars(
+
                                 $question["QuestionText"]
+
                             );
 
                             ?>
 
-
                         </h3>
-
-
-
-
-
-
-
-
 
                         <!-- USER ANSWER -->
 
-
                         <div
+
                             class="
+
 mb-5
+
 ">
 
-
                             <p
+
                                 class="
+
 font-semibold
+
 ">
 
                                 Your Answer:
 
                             </p>
 
-
-
-
                             <p
+
                                 class="
+
 mt-2
+
 ">
 
                                 <?php
 
                                 echo htmlspecialchars(
+
                                     $userAnswerText
+
                                 );
 
                                 ?>
 
-
                             </p>
-
-
 
                         </div>
 
-
-
-
-
-
-
-
-
                         <!-- CORRECT ANSWER -->
 
-
                         <div
+
                             class="
+
 mb-5
+
 ">
 
-
                             <p
+
                                 class="
+
 font-semibold
+
 ">
 
                                 Correct Answer:
 
                             </p>
 
-
-
-
                             <p
+
                                 class="
+
 mt-2
+
 ">
 
                                 <?php
 
                                 echo htmlspecialchars(
+
                                     $correctAnswerText
+
                                 );
 
                                 ?>
 
-
                             </p>
-
-
 
                         </div>
 
-
-
-
-
-
-
-
-
                         <!-- RESULT -->
-
 
                         <?php if ($isCorrect): ?>
 
-
                             <p
+
                                 class="
+
 text-green-400
+
 font-bold
+
 text-lg
+
 ">
 
                                 ✅ Correct
 
                             </p>
 
-
-
                         <?php else: ?>
 
-
                             <p
+
                                 class="
+
 text-red-400
+
 font-bold
+
 text-lg
+
 ">
 
                                 ❌ Incorrect
 
                             </p>
 
-
-
                         <?php endif; ?>
-
-
-
-
-
 
                     </div>
 
-
-
-
-
-
-
                 <?php endforeach; ?>
-
-
-
-
-
 
             </div>
 
-
         </section>
-
-
 
     <?php endif; ?>
 
-
-
-
-
-
-
-
-
     <!-- =====================================================
-     TAKE QUIZ AGAIN
-====================================================== -->
 
+     TAKE QUIZ AGAIN
+
+\====================================================== -->
 
     <?php if ($recentResult): ?>
 
-
         <section
-            class="
-max-w-5xl
-mx-auto
-px-8
-pb-16
-text-center
-">
 
+            class="
+
+max-w-5xl
+
+mx-auto
+
+px-8
+
+pb-16
+
+text-center
+
+">
 
             <div
+
                 class="
+
 bg-[var(--card)]
+
 rounded-xl
+
 shadow
+
 p-8
+
 ">
 
-
-
                 <h2
+
                     class="
+
 text-2xl
+
 font-bold
+
 mb-4
+
 ">
 
                     Want to try again?
 
                 </h2>
 
-
-
-
-
                 <p
+
                     class="
+
 text-[var(--muted)]
+
 mb-6
+
 ">
 
                     You can take the quiz again to improve your score.
 
                 </p>
 
-
-
-
-
-
-
                 <a
+
                     href="take_quiz.php?retry=1"
+
                     class="
+
 inline-block
+
 px-8
+
 py-3
+
 bg-blue-600
+
 text-white
+
 rounded-lg
+
 font-semibold
+
 no-underline
+
 hover:bg-blue-700
+
 transition
+
 ">
 
                     🔄 Take Quiz Again
 
                 </a>
 
-
-
-
-
-
             </div>
 
-
         </section>
-
-
 
     <?php endif; ?>
 
     <!-- =====================================================
-     FOOTER
-====================================================== -->
 
+     FOOTER
+
+\====================================================== -->
 
     <footer
-        class="
-bg-[var(--nav)]
-mt-20
-px-6
-py-12
-">
 
+        class="
+
+bg-[var(--nav)]
+
+mt-20
+
+px-6
+
+py-12
+
+">
 
         <div
+
             class="
+
 max-w-7xl
+
 mx-auto
+
 grid
+
 md:grid-cols-4
+
 gap-10
+
 ">
-
-
-
-
 
             <!-- BRAND -->
 
-
             <div>
 
-
                 <a
+
                     href="user_home.php"
+
                     class="
+
 text-2xl
+
 font-bold
+
 text-[var(--secondary)]
+
 no-underline
+
 ">
 
                     🛡 PhishGuard AI
 
                 </a>
 
-
-
-
                 <p
+
                     class="
+
 mt-4
+
 text-sm
+
 text-[var(--muted)]
+
 leading-relaxed
+
 ">
 
                     An AI-based phishing URL detection and
+
                     cybersecurity awareness system that helps
+
                     users identify online threats and improve
+
                     digital security.
 
                 </p>
 
-
             </div>
-
-
-
-
-
-
 
             <!-- QUICK LINKS -->
 
-
             <div>
 
-
                 <h3
+
                     class="
+
 text-lg
+
 font-bold
+
 mb-4
+
 ">
 
                     Quick Links
 
                 </h3>
 
-
-
-
                 <ul
-                    class="
-space-y-3
-text-sm
-">
 
+                    class="
+
+space-y-3
+
+text-sm
+
+">
 
                     <li>
 
                         <a
+
                             href="user_home.php"
+
                             class="nav-link no-underline">
 
                             Home
@@ -1616,12 +1566,12 @@ text-sm
 
                     </li>
 
-
-
                     <li>
 
                         <a
+
                             href="detection.php"
+
                             class="nav-link no-underline">
 
                             Detection
@@ -1630,12 +1580,12 @@ text-sm
 
                     </li>
 
-
-
                     <li>
 
                         <a
+
                             href="take_quiz.php"
+
                             class="nav-link no-underline">
 
                             Quiz
@@ -1646,50 +1596,44 @@ text-sm
 
                 </ul>
 
-
             </div>
-
-
-
-
-
-
-
-
 
             <!-- SECURITY -->
 
-
             <div>
 
-
                 <h3
+
                     class="
+
 text-lg
+
 font-bold
+
 mb-4
+
 ">
 
                     Security
 
                 </h3>
 
-
-
-
-
                 <ul
+
                     class="
+
 space-y-3
+
 text-sm
+
 ">
-
-
 
                     <li>
 
                         <a
+
                             href="awareness.php?source=user"
+
                             class="nav-link no-underline">
 
                             Phishing Awareness
@@ -1698,13 +1642,12 @@ text-sm
 
                     </li>
 
-
-
-
                     <li>
 
                         <a
+
                             href="detection.php"
+
                             class="nav-link no-underline">
 
                             Detection
@@ -1713,13 +1656,12 @@ text-sm
 
                     </li>
 
-
-
-
                     <li>
 
                         <a
+
                             href="take_quiz.php"
+
                             class="nav-link no-underline">
 
                             Security Quiz
@@ -1728,193 +1670,168 @@ text-sm
 
                     </li>
 
-
-
-
                 </ul>
-
 
             </div>
 
-
-
-
-
-
-
-
-
             <!-- ABOUT -->
-
 
             <div>
 
-
                 <h3
+
                     class="
+
 text-lg
+
 font-bold
+
 mb-4
+
 ">
 
                     About System
 
                 </h3>
 
-
-
-
                 <p
+
                     class="
+
 text-sm
+
 text-[var(--muted)]
+
 leading-relaxed
+
 ">
 
                     Powered by AI using Random Forest and CNN models for phishing URL detection and cybersecurity analysis.
 
                 </p>
 
-
-
             </div>
-
-
-
-
 
         </div>
 
-
-
-
-
-
-
         <!-- COPYRIGHT -->
 
-
         <div
+
             class="
+
 max-w-7xl
+
 mx-auto
+
 mt-10
+
 pt-6
+
 border-t
+
 border-gray-500/20
+
 text-center
+
 text-sm
+
 text-[var(--muted)]
+
 ">
 
             © 2026 PhishGuard AI. All rights reserved.
 
         </div>
 
-
-
-
-
-
     </footer>
 
-
-
-
-
-
-
-
-
     <!-- =====================================================
-     BACK TO TOP BUTTON
-====================================================== -->
 
+     BACK TO TOP BUTTON
+
+\====================================================== -->
 
     <button
+
         id="backToTop"
+
         class="
+
 fixed
+
 bottom-6
+
 right-6
+
 hidden
+
 bg-blue-600
+
 text-white
+
 w-12
+
 h-12
+
 rounded-full
+
 shadow-lg
+
 text-2xl
+
 font-bold
+
 hover:bg-blue-700
+
 transition
+
 z-50
+
 ">
 
         ↑
 
     </button>
 
-
-
-
-
-
-
-
-
     <!-- =====================================================
-     BACK TO TOP SCRIPT
-====================================================== -->
 
+     BACK TO TOP SCRIPT
+
+\====================================================== -->
 
     <script>
         const backToTop =
+
             document.getElementById("backToTop");
-
-
 
         if (backToTop) {
 
-
-
             window.addEventListener(
+
                 "scroll",
+
                 function() {
-
-
 
                     if (window.scrollY > 300) {
 
-
                         backToTop.classList.remove("hidden");
-
 
                     } else {
 
-
                         backToTop.classList.add("hidden");
 
-
                     }
-
-
 
                 }
 
             );
 
-
-
-
-
-
-
             backToTop.addEventListener(
+
                 "click",
+
                 function() {
-
-
 
                     window.scrollTo({
 
@@ -1924,30 +1841,44 @@ z-50
 
                     });
 
-
-
                 }
 
             );
 
-
-
         }
     </script>
-
-
-
-
-
 
     <!-- MAIN JS -->
 
     <script src="js/script.js"></script>
 
+    <script>
+        (function() {
+            const toggle = document.getElementById('quiz-menu-toggle');
+            const nav = document.getElementById('quiz-primary-nav');
+            if (!toggle || !nav) return;
 
-
-
-
+            function setOpen(open) {
+                nav.classList.toggle('is-open', open);
+                toggle.setAttribute('aria-expanded', String(open));
+                toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+                toggle.textContent = open ? '✕' : '☰';
+            }
+            toggle.addEventListener('click', function() {
+                setOpen(!nav.classList.contains('is-open'));
+            });
+            nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') setOpen(false);
+            });
+            document.addEventListener('click', e => {
+                if (!nav.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
+            });
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) setOpen(false);
+            });
+        })();
+    </script>
 </body>
 
 </html>

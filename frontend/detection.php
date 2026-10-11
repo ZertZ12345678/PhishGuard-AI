@@ -1,19 +1,13 @@
 <?php
 
-
-
 // Get URL from Home page if one was passed using GET
 
 $urlFromHome = '';
-
-
 
 if (isset($_GET['url'])) {
 
     $urlFromHome = trim($_GET['url']);
 }
-
-
 
 // Prevent HTML injection
 
@@ -27,25 +21,15 @@ $safeUrl = htmlspecialchars(
 
 );
 
-
-
 ?>
-
-
 
 <!DOCTYPE html>
 
 <html lang="en">
 
-
-
 <head>
 
-
-
     <meta charset="UTF-8">
-
-
 
     <meta
 
@@ -53,35 +37,150 @@ $safeUrl = htmlspecialchars(
 
         content="width=device-width, initial-scale=1.0">
 
-
-
     <title>Detection - PhishGuard AI</title>
-
-
 
     <!-- Existing Project CSS -->
 
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Responsive additions only: original desktop layout and detection logic preserved -->
+    <style>
+        #detection-menu-button {
+            display: none;
+        }
 
+        @media (max-width: 1023px) {
+            #detection-header {
+                position: relative;
+                padding: 1rem 1.5rem;
+            }
+
+            #detection-menu-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .5rem;
+                color: var(--text);
+                background: transparent;
+                border: 1px solid var(--muted);
+                border-radius: .5rem;
+                font-size: 1.5rem;
+                line-height: 1;
+                cursor: pointer;
+            }
+
+            #detection-nav {
+                display: none;
+                position: absolute;
+                z-index: 60;
+                top: 100%;
+                left: 0;
+                right: 0;
+                padding: 1.25rem 1.5rem;
+                background: var(--nav);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, .2);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            #detection-nav.menu-open {
+                display: flex;
+            }
+
+            #detection-nav a {
+                display: block;
+                padding: .35rem 0;
+            }
+
+            #detection-nav #theme-toggle {
+                align-self: flex-start;
+            }
+
+            main .grid.md\:grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            footer .grid.md\:grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767px) {
+            #detection-header {
+                padding: 1rem;
+                gap: .75rem;
+            }
+
+            #detection-header>a {
+                font-size: 1.2rem;
+            }
+
+            #detection-main {
+                padding: 2.5rem 1rem;
+            }
+
+            #detection-main h1 {
+                font-size: clamp(1.85rem, 7vw, 2.5rem);
+                line-height: 1.2;
+            }
+
+            #detection-main>section:first-child>p {
+                font-size: 1rem;
+            }
+
+            #detection-card {
+                margin-top: 2rem;
+                padding: 1.25rem;
+            }
+
+            #detection-card #urlForm {
+                flex-direction: column;
+            }
+
+            #detection-card #urlForm>div {
+                min-width: 0;
+            }
+
+            #detection-card #urlInput {
+                min-width: 0;
+            }
+
+            #detection-card #analyzeButton {
+                width: 100%;
+            }
+
+            #resultBox {
+                padding: 1rem;
+                overflow-wrap: anywhere;
+            }
+
+            #resultBox .grid.grid-cols-2 {
+                gap: .75rem;
+            }
+
+            #resultBox .grid.md\:grid-cols-2 {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            #detection-main .grid.md\:grid-cols-3,
+            footer .grid.md\:grid-cols-4 {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            footer {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
 
     <!-- Tailwind CSS -->
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-
-
 </head>
 
-
-
-
-
 <body class="bg-[var(--bg)] text-[var(--text)] transition duration-300">
-
-
-
-
 
     <!-- =====================================================
 
@@ -91,15 +190,9 @@ $safeUrl = htmlspecialchars(
 
 ====================================================== -->
 
-
-
-    <header class="flex justify-between items-center px-10 py-5 bg-[var(--nav)]">
-
-
+    <header id="detection-header" class="flex justify-between items-center px-10 py-5 bg-[var(--nav)]">
 
         <!-- Logo -->
-
-
 
         <a
 
@@ -111,23 +204,12 @@ $safeUrl = htmlspecialchars(
 
         </a>
 
-
-
-
-
+        <button type="button" id="detection-menu-button" aria-label="Open navigation" aria-controls="detection-nav" aria-expanded="false">☰</button>
         <!-- Navigation -->
 
-
-
-        <nav class="flex items-center gap-6">
-
-
-
-
+        <nav id="detection-nav" class="flex items-center gap-6">
 
             <!-- Home -->
-
-
 
             <a
 
@@ -139,13 +221,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Detection - ACTIVE -->
-
-
 
             <a
 
@@ -157,13 +233,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Awareness -->
-
-
 
             <a
 
@@ -175,13 +245,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Quiz -->
-
-
 
             <a
 
@@ -193,13 +257,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Dashboard -->
-
-
 
             <a
 
@@ -211,13 +269,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Logout -->
-
-
 
             <a
 
@@ -229,13 +281,7 @@ $safeUrl = htmlspecialchars(
 
             </a>
 
-
-
-
-
             <!-- Theme Toggle -->
-
-
 
             <button
 
@@ -247,21 +293,9 @@ $safeUrl = htmlspecialchars(
 
             </button>
 
-
-
-
-
         </nav>
 
-
-
     </header>
-
-
-
-
-
-
 
     <!-- =====================================================
 
@@ -269,13 +303,7 @@ $safeUrl = htmlspecialchars(
 
 ====================================================== -->
 
-
-
-    <main class="max-w-6xl mx-auto px-6 py-16">
-
-
-
-
+    <main id="detection-main" class="max-w-6xl mx-auto px-6 py-16">
 
         <!-- =================================================
 
@@ -283,13 +311,7 @@ $safeUrl = htmlspecialchars(
 
     ================================================== -->
 
-
-
         <section class="text-center">
-
-
-
-
 
             <div
 
@@ -323,10 +345,6 @@ $safeUrl = htmlspecialchars(
 
             </div>
 
-
-
-
-
             <h1
 
                 class="
@@ -344,10 +362,6 @@ $safeUrl = htmlspecialchars(
                 Phishing URL Detection
 
             </h1>
-
-
-
-
 
             <p
 
@@ -375,25 +389,13 @@ $safeUrl = htmlspecialchars(
 
             </p>
 
-
-
-
-
         </section>
-
-
-
-
-
-
 
         <!-- =================================================
 
          DETECTION CARD
 
     ================================================== -->
-
-
 
         <section
 
@@ -417,13 +419,7 @@ $safeUrl = htmlspecialchars(
 
         ">
 
-
-
-
-
             <!-- URL FORM -->
-
-
 
             <form
 
@@ -441,19 +437,9 @@ $safeUrl = htmlspecialchars(
 
             ">
 
-
-
-
-
                 <!-- Input -->
 
-
-
                 <div class="relative flex-1">
-
-
-
-
 
                     <span
 
@@ -475,10 +461,6 @@ $safeUrl = htmlspecialchars(
 
                     </span>
 
-
-
-
-
                     <input
 
                         type="text"
@@ -494,8 +476,6 @@ $safeUrl = htmlspecialchars(
                         autocomplete="off"
 
                         required
-
-
 
                         class="
 
@@ -527,29 +507,15 @@ $safeUrl = htmlspecialchars(
 
                     ">
 
-
-
-
-
                 </div>
 
-
-
-
-
-
-
                 <!-- Analyze Button -->
-
-
 
                 <button
 
                     type="submit"
 
                     id="analyzeButton"
-
-
 
                     class="
 
@@ -587,17 +553,7 @@ $safeUrl = htmlspecialchars(
 
                 </button>
 
-
-
-
-
             </form>
-
-
-
-
-
-
 
             <!-- =================================================
 
@@ -605,13 +561,9 @@ $safeUrl = htmlspecialchars(
 
         ================================================== -->
 
-
-
             <div
 
                 id="errorMessage"
-
-
 
                 class="
 
@@ -633,29 +585,15 @@ $safeUrl = htmlspecialchars(
 
             </div>
 
-
-
-
-
-
-
             <!-- =================================================
 
  LOADING WITH PERCENTAGE
 
 ================================================== -->
 
-
-
-
-
             <div
 
-
-
                 id="loadingBox"
-
-
 
                 class="
 
@@ -667,13 +605,7 @@ text-center
 
 ">
 
-
-
-
-
                 <div
-
-
 
                     class="
 
@@ -687,17 +619,9 @@ mx-auto
 
 ">
 
-
-
-
-
                     <!-- spinning circle -->
 
-
-
                     <div
-
-
 
                         class="
 
@@ -717,29 +641,13 @@ animate-spin
 
 ">
 
-
-
                     </div>
-
-
-
-
-
-
-
-
 
                     <!-- percentage inside circle -->
 
-
-
                     <div
 
-
-
                         id="loadingPercent"
-
-
 
                         class="
 
@@ -761,35 +669,13 @@ text-[var(--primary)]
 
 ">
 
-
-
                         0%
-
-
 
                     </div>
 
-
-
-
-
-
-
                 </div>
 
-
-
-
-
-
-
-
-
-
-
                 <p
-
-
 
                     class="
 
@@ -799,27 +685,11 @@ text-[var(--muted)]
 
 ">
 
-
-
                     Analyzing URL...
-
-
 
                 </p>
 
-
-
-
-
-
-
             </div>
-
-
-
-
-
-
 
             <!-- =================================================
 
@@ -827,13 +697,9 @@ text-[var(--muted)]
 
         ================================================== -->
 
-
-
             <div
 
                 id="resultBox"
-
-
 
                 class="
 
@@ -851,13 +717,7 @@ text-[var(--muted)]
 
             ">
 
-
-
-
-
                 <!-- Result Header -->
-
-
 
                 <div
 
@@ -877,25 +737,13 @@ text-[var(--muted)]
 
                 ">
 
-
-
-
-
                     <div class="flex items-center gap-4">
 
-
-
-
-
                         <!-- Result Icon -->
-
-
 
                         <div
 
                             id="resultIcon"
-
-
 
                             class="
 
@@ -921,17 +769,7 @@ text-[var(--muted)]
 
                         </div>
 
-
-
-
-
-
-
                         <div>
-
-
-
-
 
                             <p
 
@@ -947,15 +785,9 @@ text-[var(--muted)]
 
                             </p>
 
-
-
-
-
                             <h2
 
                                 id="resultTitle"
-
-
 
                                 class="
 
@@ -969,33 +801,15 @@ text-[var(--muted)]
 
                             </h2>
 
-
-
-
-
                         </div>
-
-
-
-
 
                     </div>
 
-
-
-
-
-
-
                     <!-- Risk Badge -->
-
-
 
                     <div
 
                         id="statusBadge"
-
-
 
                         class="
 
@@ -1015,25 +829,13 @@ text-[var(--muted)]
 
                     </div>
 
-
-
-
-
                 </div>
-
-
-
-
-
-
 
                 <!-- =============================================
 
                  ANALYZED URL
 
             ============================================== -->
-
-
 
                 <div
 
@@ -1048,10 +850,6 @@ text-[var(--muted)]
                     rounded-xl
 
                 ">
-
-
-
-
 
                     <p
 
@@ -1071,15 +869,9 @@ text-[var(--muted)]
 
                     </p>
 
-
-
-
-
                     <p
 
                         id="analyzedUrl"
-
-
 
                         class="
 
@@ -1097,17 +889,7 @@ text-[var(--muted)]
 
                     </p>
 
-
-
-
-
                 </div>
-
-
-
-
-
-
 
                 <!-- =============================================
 
@@ -1115,13 +897,7 @@ text-[var(--muted)]
 
             ============================================== -->
 
-
-
                 <div class="mt-7">
-
-
-
-
 
                     <div
 
@@ -1134,10 +910,6 @@ text-[var(--muted)]
                         items-center
 
                     ">
-
-
-
-
 
                         <span
 
@@ -1153,15 +925,9 @@ text-[var(--muted)]
 
                         </span>
 
-
-
-
-
                         <span
 
                             id="riskScore"
-
-
 
                             class="
 
@@ -1175,21 +941,9 @@ text-[var(--muted)]
 
                         </span>
 
-
-
-
-
                     </div>
 
-
-
-
-
-
-
                     <!-- Risk Progress Background -->
-
-
 
                     <div
 
@@ -1209,19 +963,11 @@ text-[var(--muted)]
 
                     ">
 
-
-
-
-
                         <!-- Risk Bar -->
-
-
 
                         <div
 
                             id="riskBar"
-
-
 
                             class="
 
@@ -1235,29 +981,13 @@ text-[var(--muted)]
 
                         "
 
-
-
                             style="width: 0%;">
 
                         </div>
 
-
-
-
-
                     </div>
 
-
-
-
-
                 </div>
-
-
-
-
-
-
 
                 <!-- =============================================
                      AI MODEL RESULTS
@@ -1332,7 +1062,6 @@ text-[var(--muted)]
 
                         </div>
 
-
                         <!-- RANDOM FOREST -->
                         <div class="p-5 rounded-xl bg-[var(--card)] border border-white/5">
 
@@ -1396,7 +1125,6 @@ text-[var(--muted)]
 
                     </div>
 
-
                     <!-- MODEL AGREEMENT -->
                     <div
                         id="modelAgreement"
@@ -1404,7 +1132,6 @@ text-[var(--muted)]
                     </div>
 
                 </div>
-
 
                 <!-- =============================================
                      RESULT MESSAGE
@@ -1414,7 +1141,6 @@ text-[var(--muted)]
                     id="resultMessage"
                     class="mt-7 text-[var(--text)] leading-relaxed">
                 </div>
-
 
                 <!-- =============================================
                      DETECTION DETAILS
@@ -1433,7 +1159,6 @@ text-[var(--muted)]
 
                 </div>
 
-
                 <!-- =============================================
                      SECURITY RECOMMENDATION
                 ============================================== -->
@@ -1450,7 +1175,6 @@ text-[var(--muted)]
                     </span>
 
                 </div>
-
 
                 <!-- =============================================
                      WARNING / DISCLAIMER
@@ -1479,25 +1203,9 @@ text-[var(--muted)]
 
                 </div>
 
-
-
-
-
-
-
             </div>
 
-
-
-
-
         </section>
-
-
-
-
-
-
 
         <!-- =================================================
 
@@ -1505,13 +1213,7 @@ text-[var(--muted)]
 
     ================================================== -->
 
-
-
         <section class="max-w-4xl mx-auto mt-10">
-
-
-
-
 
             <h2
 
@@ -1531,12 +1233,6 @@ text-[var(--muted)]
 
             </h2>
 
-
-
-
-
-
-
             <div
 
                 class="
@@ -1551,13 +1247,7 @@ text-[var(--muted)]
 
             ">
 
-
-
-
-
                 <!-- Card 1 -->
-
-
 
                 <div
 
@@ -1573,19 +1263,11 @@ text-[var(--muted)]
 
                 ">
 
-
-
-
-
                     <div class="text-3xl">
 
                         🔒
 
                     </div>
-
-
-
-
 
                     <h3
 
@@ -1602,10 +1284,6 @@ text-[var(--muted)]
                         HTTPS Security
 
                     </h3>
-
-
-
-
 
                     <p
 
@@ -1627,21 +1305,9 @@ text-[var(--muted)]
 
                     </p>
 
-
-
-
-
                 </div>
 
-
-
-
-
-
-
                 <!-- Card 2 -->
-
-
 
                 <div
 
@@ -1657,19 +1323,11 @@ text-[var(--muted)]
 
                 ">
 
-
-
-
-
                     <div class="text-3xl">
 
                         🌐
 
                     </div>
-
-
-
-
 
                     <h3
 
@@ -1686,10 +1344,6 @@ text-[var(--muted)]
                         Domain Analysis
 
                     </h3>
-
-
-
-
 
                     <p
 
@@ -1711,21 +1365,9 @@ text-[var(--muted)]
 
                     </p>
 
-
-
-
-
                 </div>
 
-
-
-
-
-
-
                 <!-- Card 3 -->
-
-
 
                 <div
 
@@ -1741,19 +1383,11 @@ text-[var(--muted)]
 
                 ">
 
-
-
-
-
                     <div class="text-3xl">
 
                         ⚠
 
                     </div>
-
-
-
-
 
                     <h3
 
@@ -1770,10 +1404,6 @@ text-[var(--muted)]
                         Suspicious Patterns
 
                     </h3>
-
-
-
-
 
                     <p
 
@@ -1795,39 +1425,19 @@ text-[var(--muted)]
 
                     </p>
 
-
-
-
-
                 </div>
-
-
-
-
 
             </div>
 
-
-
-
-
         </section>
 
-
-
-
-
     </main>
-
-
 
     <!-- =====================================================
 
      FOOTER
 
 ====================================================== -->
-
-
 
     <footer
 
@@ -1842,10 +1452,6 @@ text-[var(--muted)]
         py-12
 
     ">
-
-
-
-
 
         <div
 
@@ -1863,17 +1469,9 @@ text-[var(--muted)]
 
         ">
 
-
-
-
-
             <!-- Brand -->
 
-
-
             <div>
-
-
 
                 <a
 
@@ -1894,10 +1492,6 @@ text-[var(--muted)]
                     🛡 PhishGuard AI
 
                 </a>
-
-
-
-
 
                 <p
 
@@ -1923,27 +1517,11 @@ text-[var(--muted)]
 
                 </p>
 
-
-
-
-
             </div>
-
-
-
-
-
-
 
             <!-- Quick Links -->
 
-
-
             <div>
-
-
-
-
 
                 <h3
 
@@ -1963,10 +1541,6 @@ text-[var(--muted)]
 
                 </h3>
 
-
-
-
-
                 <ul
 
                     class="
@@ -1976,8 +1550,6 @@ text-[var(--muted)]
                     text-sm
 
                 ">
-
-
 
                     <li>
 
@@ -1993,10 +1565,6 @@ text-[var(--muted)]
 
                     </li>
 
-
-
-
-
                     <li>
 
                         <a
@@ -2010,10 +1578,6 @@ text-[var(--muted)]
                         </a>
 
                     </li>
-
-
-
-
 
                     <li>
 
@@ -2029,39 +1593,13 @@ text-[var(--muted)]
 
                     </li>
 
-
-
-
-
-
-
-
-
                 </ul>
-
-
-
-
 
             </div>
 
-
-
-
-
-
-
-
-
             <!-- Security -->
 
-
-
             <div>
-
-
-
-
 
                 <h3
 
@@ -2081,10 +1619,6 @@ text-[var(--muted)]
 
                 </h3>
 
-
-
-
-
                 <ul
 
                     class="
@@ -2094,8 +1628,6 @@ text-[var(--muted)]
                     text-sm
 
                 ">
-
-
 
                     <li>
 
@@ -2111,10 +1643,6 @@ text-[var(--muted)]
 
                     </li>
 
-
-
-
-
                     <li>
 
                         <a
@@ -2128,8 +1656,6 @@ text-[var(--muted)]
                         </a>
 
                     </li>
-
-
 
                     <li>
 
@@ -2145,35 +1671,13 @@ text-[var(--muted)]
 
                     </li>
 
-
-
-
-
                 </ul>
-
-
-
-
 
             </div>
 
-
-
-
-
-
-
-
-
             <!-- Contact -->
 
-
-
             <div>
-
-
-
-
 
                 <h3
 
@@ -2193,10 +1697,6 @@ text-[var(--muted)]
 
                 </h3>
 
-
-
-
-
                 <p
 
                     class="
@@ -2209,37 +1709,15 @@ text-[var(--muted)]
 
                 ">
 
-
-
                     Powered by AI using Random Forest and CNN models for phishing URL detection and cybersecurity analysis.
-
-
 
                 </p>
 
-
-
-
-
             </div>
-
-
-
-
 
         </div>
 
-
-
-
-
-
-
-
-
         <!-- Bottom Copyright -->
-
-
 
         <div
 
@@ -2265,27 +1743,13 @@ text-[var(--muted)]
 
         ">
 
-
-
             © 2026 PhishGuard AI.
 
             All rights reserved.
 
-
-
         </div>
 
-
-
-
-
     </footer>
-
-
-
-
-
-
 
     <!-- =====================================================
 
@@ -2293,23 +1757,13 @@ text-[var(--muted)]
 
 ====================================================== -->
 
-
-
     <script src="js/script.js"></script>
-
-
-
-
-
-
 
     <!-- =====================================================
 
      DETECTION JAVASCRIPT
 
 ====================================================== -->
-
-
 
     <script>
         // ========================================================
@@ -2318,95 +1772,61 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
         const urlForm =
 
             document.getElementById("urlForm");
-
-
 
         const urlInput =
 
             document.getElementById("urlInput");
 
-
-
         const analyzeButton =
 
             document.getElementById("analyzeButton");
-
-
 
         const errorMessage =
 
             document.getElementById("errorMessage");
 
-
-
         const loadingBox =
 
             document.getElementById("loadingBox");
-
-
 
         const resultBox =
 
             document.getElementById("resultBox");
 
-
-
         const resultIcon =
 
             document.getElementById("resultIcon");
-
-
 
         const resultTitle =
 
             document.getElementById("resultTitle");
 
-
-
         const statusBadge =
 
             document.getElementById("statusBadge");
-
-
 
         const analyzedUrl =
 
             document.getElementById("analyzedUrl");
 
-
-
         const riskScore =
 
             document.getElementById("riskScore");
-
-
 
         const riskBar =
 
             document.getElementById("riskBar");
 
-
-
         const resultMessage =
 
             document.getElementById("resultMessage");
 
-
-
         const reasonList =
 
             document.getElementById("reasonList");
-
-
-
-
-
-
 
         // ========================================================
 
@@ -2414,47 +1834,27 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
         urlForm.addEventListener(
 
             "submit",
 
             async function(event) {
 
-
-
                 event.preventDefault();
-
-
-
-
 
                 const url =
 
                     urlInput.value.trim();
 
-
-
-
-
                 // Reset old result
 
                 hideError();
 
-
-
                 resultBox.classList.add("hidden");
-
-
-
-
 
                 // Empty input validation
 
                 if (url === "") {
-
-
 
                     showError(
 
@@ -2462,29 +1862,13 @@ text-[var(--muted)]
 
                     );
 
-
-
                     return;
-
-
 
                 }
 
-
-
-
-
                 startLoading();
 
-
-
-
-
                 try {
-
-
-
-
 
                     // Send URL to PHP backend
 
@@ -2492,11 +1876,7 @@ text-[var(--muted)]
 
                         "../backend/php/detect_process.php", {
 
-
-
                             method: "POST",
-
-
 
                             headers: {
 
@@ -2504,23 +1884,15 @@ text-[var(--muted)]
 
                             },
 
-
-
                             body: JSON.stringify({
 
                                 url: url
 
                             })
 
-
-
                         }
 
                     );
-
-
-
-
 
                     // Read response first as text
 
@@ -2528,31 +1900,17 @@ text-[var(--muted)]
 
                         await response.text();
 
-
-
-
-
                     let data;
-
-
-
-
 
                     // Convert backend response to JSON
 
                     try {
 
-
-
                         data =
 
                             JSON.parse(responseText);
 
-
-
                     } catch (error) {
-
-
 
                         console.error(
 
@@ -2562,35 +1920,19 @@ text-[var(--muted)]
 
                         );
 
-
-
-
-
                         throw new Error(
 
                             "The detection server returned an invalid response."
 
                         );
 
-
-
                     }
 
-
-
-
-
                     stopLoading();
-
-
-
-
 
                     // Backend error
 
                     if (!response.ok || !data.success) {
-
-
 
                         showError(
 
@@ -2600,43 +1942,19 @@ text-[var(--muted)]
 
                         );
 
-
-
                         return;
 
-
-
                     }
-
-
-
-
 
                     // Show result
 
                     displayResult(data);
 
-
-
-
-
                 } catch (error) {
-
-
-
-
 
                     stopLoading();
 
-
-
-
-
                     console.error(error);
-
-
-
-
 
                     showError(
 
@@ -2646,21 +1964,11 @@ text-[var(--muted)]
 
                     );
 
-
-
                 }
-
-
 
             }
 
         );
-
-
-
-
-
-
 
         // ========================================================
 
@@ -2668,23 +1976,9 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
-
-
         let loadingInterval;
 
-
-
-
-
-
-
         function startLoading() {
-
-
-
-
 
             loadingBox.classList.remove(
 
@@ -2692,15 +1986,7 @@ text-[var(--muted)]
 
             );
 
-
-
-
-
             analyzeButton.disabled = true;
-
-
-
-
 
             analyzeButton.classList.add(
 
@@ -2710,13 +1996,7 @@ text-[var(--muted)]
 
             );
 
-
-
-
-
             analyzeButton.innerHTML = `
-
-
 
     <span
 
@@ -2742,29 +2022,13 @@ text-[var(--muted)]
 
     ></span>
 
-
-
     Analyzing...
-
-
 
     `;
 
-
-
-
-
-
-
             // Start percentage
 
-
-
             let percent = 1;
-
-
-
-
 
             const percentText =
 
@@ -2774,27 +2038,13 @@ text-[var(--muted)]
 
                 );
 
-
-
-
-
-
-
             loadingInterval =
 
                 setInterval(
 
                     function() {
 
-
-
-
-
                         if (percent < 95) {
-
-
-
-
 
                             percent +=
 
@@ -2804,41 +2054,17 @@ text-[var(--muted)]
 
                                 );
 
-
-
-
-
-
-
                             if (percent > 95) {
-
-
 
                                 percent = 95;
 
-
-
                             }
-
-
-
-
-
-
 
                             percentText.textContent =
 
                                 percent + "%";
 
-
-
-
-
                         }
-
-
-
-
 
                     },
 
@@ -2846,15 +2072,7 @@ text-[var(--muted)]
 
                 );
 
-
-
-
-
         }
-
-
-
-
 
         // ========================================================
 
@@ -2862,29 +2080,13 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
-
-
         function stopLoading() {
-
-
-
-
-
-
 
             clearInterval(
 
                 loadingInterval
 
             );
-
-
-
-
-
-
 
             const percentText =
 
@@ -2894,33 +2096,13 @@ text-[var(--muted)]
 
                 );
 
-
-
-
-
-
-
             percentText.textContent =
 
                 "100%";
 
-
-
-
-
-
-
-
-
-
-
             setTimeout(
 
                 function() {
-
-
-
-
 
                     loadingBox.classList.add(
 
@@ -2928,31 +2110,13 @@ text-[var(--muted)]
 
                     );
 
-
-
-
-
-
-
                 },
 
                 300
 
             );
 
-
-
-
-
-
-
-
-
             analyzeButton.disabled = false;
-
-
-
-
 
             analyzeButton.classList.remove(
 
@@ -2962,25 +2126,11 @@ text-[var(--muted)]
 
             );
 
-
-
-
-
             analyzeButton.innerHTML =
 
                 "Analyze URL";
 
-
-
-
-
         }
-
-
-
-
-
-
 
         // ========================================================
 
@@ -2988,21 +2138,11 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
         function showError(message) {
-
-
-
-
 
             errorMessage.textContent =
 
                 message;
-
-
-
-
 
             errorMessage.classList.remove(
 
@@ -3010,19 +2150,9 @@ text-[var(--muted)]
 
             );
 
-
-
         }
 
-
-
-
-
         function hideError() {
-
-
-
-
 
             errorMessage.classList.add(
 
@@ -3030,32 +2160,17 @@ text-[var(--muted)]
 
             );
 
-
-
-
-
             errorMessage.textContent =
 
                 "";
 
-
-
         }
-
-
-
-
-
-
 
         // ========================================================
 
         // DISPLAY ANALYSIS RESULT
 
         // ========================================================
-
-
-
 
         function normalizeModelPrediction(value) {
 
@@ -3087,7 +2202,6 @@ text-[var(--muted)]
             return String(value);
         }
 
-
         function getModelObject(data, modelName) {
 
             const names =
@@ -3112,7 +2226,6 @@ text-[var(--muted)]
 
             return {};
         }
-
 
         function getModelValue(data, modelName, properties) {
 
@@ -3154,7 +2267,6 @@ text-[var(--muted)]
             return null;
         }
 
-
         function formatConfidence(value) {
 
             if (
@@ -3183,7 +2295,6 @@ text-[var(--muted)]
 
             return number.toFixed(2) + "%";
         }
-
 
         function setModelStatus(element, prediction) {
 
@@ -3219,17 +2330,14 @@ text-[var(--muted)]
             }
         }
 
-
         function displayResult(data) {
 
             resultBox.classList.remove("hidden");
-
 
             const status =
                 String(
                     data.status || ""
                 ).toLowerCase();
-
 
             const score =
                 Math.max(
@@ -3240,14 +2348,11 @@ text-[var(--muted)]
                     )
                 );
 
-
             analyzedUrl.textContent =
                 data.url || urlInput.value;
 
-
             riskScore.textContent =
                 score.toFixed(2) + " / 100";
-
 
             // =========================
             // CNN
@@ -3267,7 +2372,6 @@ text-[var(--muted)]
                     )
                 );
 
-
             const cnnConfidence =
                 getModelValue(
                     data,
@@ -3279,12 +2383,10 @@ text-[var(--muted)]
                     ]
                 );
 
-
             document.getElementById(
                     "cnnPrediction"
                 ).textContent =
                 cnnPrediction;
-
 
             document.getElementById(
                     "cnnConfidence"
@@ -3293,12 +2395,10 @@ text-[var(--muted)]
                     cnnConfidence
                 );
 
-
             setModelStatus(
                 document.getElementById("cnnStatus"),
                 cnnPrediction
             );
-
 
             // =========================
             // RANDOM FOREST
@@ -3318,7 +2418,6 @@ text-[var(--muted)]
                     )
                 );
 
-
             const rfConfidence =
                 getModelValue(
                     data,
@@ -3330,12 +2429,10 @@ text-[var(--muted)]
                     ]
                 );
 
-
             document.getElementById(
                     "rfPrediction"
                 ).textContent =
                 rfPrediction;
-
 
             document.getElementById(
                     "rfConfidence"
@@ -3344,12 +2441,10 @@ text-[var(--muted)]
                     rfConfidence
                 );
 
-
             setModelStatus(
                 document.getElementById("rfStatus"),
                 rfPrediction
             );
-
 
             // =========================
             // MODEL AGREEMENT
@@ -3359,7 +2454,6 @@ text-[var(--muted)]
                 document.getElementById(
                     "modelAgreement"
                 );
-
 
             if (
                 cnnPrediction !== "Unknown" &&
@@ -3403,7 +2497,6 @@ text-[var(--muted)]
                 `;
             }
 
-
             // =========================
             // RESULT MESSAGE
             // =========================
@@ -3430,7 +2523,6 @@ text-[var(--muted)]
                     "The AI models could not determine a reliable result.";
             }
 
-
             // =========================
             // SECURITY RECOMMENDATION
             // =========================
@@ -3439,7 +2531,6 @@ text-[var(--muted)]
                 document.getElementById(
                     "securityRecommendation"
                 );
-
 
             if (recommendation) {
 
@@ -3459,14 +2550,12 @@ text-[var(--muted)]
                 }
             }
 
-
             // =========================
             // DETECTION DETAILS
             // URL CHARACTERISTICS
             // =========================
 
             reasonList.innerHTML = "";
-
 
             function addReason(text) {
 
@@ -3506,14 +2595,12 @@ text-[var(--muted)]
                 reasonList.appendChild(listItem);
             }
 
-
             // ========================================================
             // ANALYZE URL STRUCTURE
             // ========================================================
 
             const detectedURL =
                 data.url || urlInput.value.trim();
-
 
             let parsedURL;
 
@@ -3531,7 +2618,6 @@ text-[var(--muted)]
                 parsedURL = null;
 
             }
-
 
             // ========================================================
             // HTTPS CHECK
@@ -3555,7 +2641,6 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // IP ADDRESS CHECK
                 // ====================================================
@@ -3563,10 +2648,8 @@ text-[var(--muted)]
                 const hostname =
                     parsedURL.hostname || "";
 
-
                 const isIPAddress =
                     /^(\d{1,3}\.){3}\d{1,3}$/.test(hostname);
-
 
                 if (isIPAddress) {
 
@@ -3582,14 +2665,12 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // URL LENGTH
                 // ====================================================
 
                 const urlLength =
                     detectedURL.length;
-
 
                 if (urlLength > 100) {
 
@@ -3611,14 +2692,12 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // SUBDOMAIN CHECK
                 // ====================================================
 
                 const domainParts =
                     hostname.split(".").filter(Boolean);
-
 
                 if (domainParts.length > 3) {
 
@@ -3634,7 +2713,6 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // SPECIAL CHARACTER CHECK
                 // ====================================================
@@ -3646,12 +2724,10 @@ text-[var(--muted)]
                         ) || []
                     ).length;
 
-
                 const specialCharacterRatio =
                     urlLength > 0 ?
                     specialCharacters / urlLength :
                     0;
-
 
                 if (
                     specialCharacterRatio > 0.20
@@ -3669,14 +2745,12 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // QUERY PARAMETER CHECK
                 // ====================================================
 
                 const query =
                     parsedURL.search;
-
 
                 if (
                     query &&
@@ -3701,7 +2775,6 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // OBFUSCATION CHECK
                 // ====================================================
@@ -3711,16 +2784,13 @@ text-[var(--muted)]
                         detectedURL
                     );
 
-
                 const hasAtSymbol =
                     detectedURL.includes("@");
-
 
                 const hasHexPattern =
                     /0x[0-9a-fA-F]+/i.test(
                         detectedURL
                     );
-
 
                 if (
                     hasEncodedCharacters ||
@@ -3740,7 +2810,6 @@ text-[var(--muted)]
 
                 }
 
-
                 // ====================================================
                 // DOMAIN DEPTH
                 // ====================================================
@@ -3754,7 +2823,6 @@ text-[var(--muted)]
                     );
 
                 }
-
 
                 // ====================================================
                 // FINAL STRUCTURAL ASSESSMENT
@@ -3785,9 +2853,6 @@ text-[var(--muted)]
                 );
 
             }
-
-
-
 
             // =========================
             // FINAL RESULT STYLE
@@ -3887,7 +2952,6 @@ text-[var(--muted)]
                 `;
             }
 
-
             riskBar.style.width = "0%";
 
             setTimeout(
@@ -3898,14 +2962,12 @@ text-[var(--muted)]
                 100
             );
 
-
             resultBox.scrollIntoView({
                 behavior: "smooth",
                 block: "nearest"
             });
 
         }
-
 
         // ========================================================
 
@@ -3915,13 +2977,7 @@ text-[var(--muted)]
 
         // ========================================================
 
-
-
         <?php if ($urlFromHome !== ''): ?>
-
-
-
-
 
             window.addEventListener(
 
@@ -3929,47 +2985,51 @@ text-[var(--muted)]
 
                 function() {
 
-
-
-
-
                     setTimeout(
 
                         function() {
 
-
-
                             urlForm.requestSubmit();
 
-
-
                         },
-
-
 
                         300
 
                     );
 
-
-
                 }
 
             );
 
-
-
-
-
         <?php endif; ?>
     </script>
 
-
-
-
-
+    <script>
+        (() => {
+            const menuButton = document.getElementById('detection-menu-button');
+            const navigation = document.getElementById('detection-nav');
+            if (!menuButton || !navigation) return;
+            menuButton.addEventListener('click', () => {
+                const isOpen = navigation.classList.toggle('menu-open');
+                menuButton.setAttribute('aria-expanded', String(isOpen));
+                menuButton.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+            });
+            navigation.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navigation.classList.remove('menu-open');
+                    menuButton.setAttribute('aria-expanded', 'false');
+                    menuButton.setAttribute('aria-label', 'Open navigation');
+                });
+            });
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    navigation.classList.remove('menu-open');
+                    menuButton.setAttribute('aria-expanded', 'false');
+                    menuButton.setAttribute('aria-label', 'Open navigation');
+                }
+            });
+        })();
+    </script>
 </body>
-
-
 
 </html>
