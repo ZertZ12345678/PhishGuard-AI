@@ -973,6 +973,8 @@ $admin =
 
                                 absolute
 
+                                z-10
+
                                 right-4
 
                                 top-1/2
@@ -1250,95 +1252,41 @@ $admin =
 
                 // =================================
 
-                // PASSWORD SHOW / HIDE
-
-                // =================================
-
-                const password =
-
-                    document.getElementById(
-
-                        "password"
-
-                    );
-
-                const passwordToggle =
-
-                    document.getElementById(
-
-                        "password-toggle"
-
-                    );
-
-                if (
-
-                    password &&
-
-                    passwordToggle
-
-                ) {
-
-                    passwordToggle.addEventListener(
-
-                        "click",
-
-                        function() {
-
-                            if (
-
-                                password.type ===
-
-                                "password"
-
-                            ) {
-
-                                password.type =
-
-                                    "text";
-
-                                passwordToggle.textContent =
-
-                                    "🙈";
-
-                                passwordToggle.setAttribute(
-
-                                    "aria-label",
-
-                                    "Hide password"
-
-                                );
-
-                            } else {
-
-                                password.type =
-
-                                    "password";
-
-                                passwordToggle.textContent =
-
-                                    "👁";
-
-                                passwordToggle.setAttribute(
-
-                                    "aria-label",
-
-                                    "Show password"
-
-                                );
-
-                            }
-
-                        }
-
-                    );
-
-                }
+                // Password visibility is handled by the standalone script below.
 
             }
 
         );
     </script>
 
+    <!-- =====================================
+         PASSWORD SHOW / HIDE
+         Same toggle flow as User Edit
+    ====================================== -->
+    <script>
+        (function() {
+            const password = document.getElementById("password");
+            const passwordToggle = document.getElementById("password-toggle");
+
+            if (!password || !passwordToggle) {
+                return;
+            }
+
+            passwordToggle.addEventListener("click", function(event) {
+                event.preventDefault();
+
+                if (password.type === "password") {
+                    password.type = "text";
+                    passwordToggle.textContent = "🙈";
+                    passwordToggle.setAttribute("aria-label", "Hide password");
+                } else {
+                    password.type = "password";
+                    passwordToggle.textContent = "👁";
+                    passwordToggle.setAttribute("aria-label", "Show password");
+                }
+            });
+        })();
+    </script>
 
     <script>
         (function() {
